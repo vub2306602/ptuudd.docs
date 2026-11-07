@@ -1,28 +1,28 @@
-﻿# Next-step guide — hướng dẫn làm việc từng bước
+# Next-step guide — hướng dẫn làm việc từng bước
 
 > Tài liệu thao tác hằng ngày cho hai sinh viên. Kế hoạch nguồn: [phan-cong-3-tuan.md](phan-cong-3-tuan.md); mốc nghiệm thu: [checkpoint.md](checkpoint.md).
 
-## Bước 0 — chuẩn bị khởi động
+## Bước 0 — mở đúng codebase
 
-1. Điền tên/MSSV và xác nhận quyền truy cập repository.
-2. Mở thư mục Flutter `26-27hk1-ct48401-project-vub2306602` làm working directory.
-3. Ghi phiên bản Flutter/Dart, thiết bị mục tiêu và ngày bắt đầu 21 ngày.
-4. Chạy app hiện tại để xác nhận baseline: scaffold counter mặc định.
-5. Tạo task cho đầu ra tuần 1 và gắn đúng người sở hữu.
+1. Dùng `26-27hk1-ct48401-labs-thangb2306582` làm điểm xuất phát; không dùng project counter scaffold.
+2. Điền tên/MSSV, quyền truy cập, phiên bản Flutter/Dart, thiết bị và ngày bắt đầu 21 ngày.
+3. Chạy app labs hiện tại; ghi nhận luồng auth/products/cart/orders.
+4. Đánh dấu hạ tầng giữ lại (Provider, GoRouter, theme, drawer, SQLite/path/preferences) và module bán hàng sẽ gỡ/tách.
+5. Chốt domain đích, schema mới, task tuần 1 và người sở hữu trước khi sửa.
 
-## Ngày 1–2 — dựng khung (cùng làm)
+## Ngày 1–2 — chuyển tiếp codebase labs (cùng làm)
 
-1. Thống nhất dependencies cần thiết: router, provider, SQLite, path, shared preferences, local notifications/timezone, chart, date formatting; thêm vào `pubspec.yaml` một lần.
-2. Thiết kế database helper, schema `categories`/`tasks`, version và dữ liệu danh mục mặc định.
-3. Tạo cấu trúc theo kế hoạch. Màn placeholder nằm trong feature của người sở hữu.
-4. Khai báo route `/tasks`, `/tasks/new`, `/tasks/:id`, `/categories`, `/stats`, `/settings` và shell; ghi cách truyền ID/extra.
-5. Đăng ký provider trong app composition; implementation tối thiểu phải compile.
-6. Chạy formatter/analyzer/build phù hợp với môi trường; sửa lỗi bộ khung trước khi chia nhánh.
-7. Cả hai review schema và commit `chore: skeleton-done`; ghi file chung đóng băng.
+1. Kiểm kê `lib/main.dart`: GoRouter, theme và MultiProvider đang nằm chung; `lib/ui/shared/app_drawer.dart` là drawer hiện có.
+2. Xác nhận `lib/services/cart_sqlite_service.dart` chỉ lưu `cart_items`; không dùng làm database chung hay đổi bảng cart thành bảng nghiệp vụ.
+3. Chốt domain và schema mới; tạo database service riêng cho Task/Habit và Category.
+4. Chốt phần auth/bán hàng cần gỡ khỏi entry flow. Nối route mới vào GoRouter và provider mới vào MultiProvider hiện có; không tạo router/provider tree thứ hai.
+5. Chỉ bổ sung dependency chưa có và đã thống nhất; không thêm lại `go_router`, `provider`, `path`, `sqflite`, `shared_preferences`, `intl`.
+6. Chạy formatter/analyzer/build phù hợp; xác nhận app chạy sau chuyển tiếp và tạo commit nền.
 
-**Kết quả bắt buộc:** app khởi động được và mở route tạm. Nếu chưa đạt, tiếp tục sửa khung.
+**Kết quả:** app labs đã được chuyển hướng; không tạo lại Flutter project, `app.dart` hay placeholder scaffold.
 
 ## Quy trình hằng ngày từ ngày 3
+
 
 1. Cập nhật nhánh ổn định theo quy ước nhóm.
 2. Làm một task nhỏ trong đúng vùng sở hữu.

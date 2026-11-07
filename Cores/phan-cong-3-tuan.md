@@ -46,65 +46,50 @@
 
 ---
 
-## 3. Cấu trúc thư mục và quyền sở hữu
+## 3. Codebase khởi đầu, cấu trúc đích và quyền sở hữu
 
-```
+Codebase labs để kế thừa: `../26-27hk1-ct48401-labs-thangb2306582`.
+
+**Đã có:** Flutter Android/iOS; `lib/models`, `lib/services`, `lib/ui`; auth/products/cart/orders; Provider, GoRouter, theme, drawer; `path`, `sqflite`, `shared_preferences`, `intl`; font Lato/Anton. `main.dart` đang chứa GoRouter, ThemeData và MultiProvider. `cart_sqlite_service.dart` chỉ quản lý `cart_items`, không phải database chung.
+
+```text
 lib/
-├── main.dart                     ← 🔒 CHUNG (đóng băng sau ngày 2)
-├── app.dart                      ← 🔒 CHUNG (đóng băng sau ngày 2)
-├── core/                         ← 🔒 CHUNG (đóng băng sau ngày 2)
-│   ├── router/app_router.dart        # khai báo SẴN tất cả route
-│   ├── database/database_helper.dart # tạo SẴN cả 2 bảng
-│   └── theme/                        # SV-B hoàn thiện giá trị màu
-└── features/
-    ├── tasks/                    ← 🟦 CHỈ SV-A sửa
-    │   ├── data/ (task.dart, task_repository.dart)
-    │   ├── providers/task_provider.dart
-    │   ├── notifications/notification_service.dart
-    │   └── ui/ (screens/, widgets/)
-    ├── categories/               ← 🟩 CHỈ SV-B sửa
-    │   ├── data/ (category.dart, category_repository.dart)
-    │   ├── providers/category_provider.dart
-    │   └── ui/
-    ├── statistics/               ← 🟩 CHỈ SV-B sửa
-    │   ├── data/stats_repository.dart
-    │   ├── providers/stats_provider.dart
-    │   └── ui/
-    └── settings/                 ← 🟩 CHỈ SV-B sửa
-        ├── providers/settings_provider.dart
-        └── ui/
+├── main.dart                  ← 🔒 CHUNG: router, theme, MultiProvider hiện đặt ở đây
+├── models/                    ← thêm Task/Habit và Category; model shop là code cũ
+├── services/                  ← thêm service/repository cho domain mới
+└── ui/
+    ├── shared/app_drawer.dart ← drawer hiện có, chỉnh điều hướng
+    ├── auth/                  ← giữ/gỡ theo quyết định nhóm
+    ├── products/, cart/, orders/ ← domain bán hàng, tách khỏi luồng đích
+    ├── tasks/                 ← 🟦 SV-A: trang chủ/danh sách/form/chi tiết
+    ├── categories/            ← 🟩 SV-B
+    ├── statistics/            ← 🟩 SV-B
+    └── settings/              ← 🟩 SV-B
 ```
 
-**Quy tắc vàng:**
-1. Chỉ sửa file trong thư mục `features/` **của mình**.
-2. Muốn sửa file 🔒 CHUNG → báo người kia, làm một PR nhỏ riêng và **cả hai đồng ý** mới merge.
-3. Được **đọc** dữ liệu của người kia nhưng **chỉ ghi** vào bảng của mình.
+Không cần tạo project Flutter mới, `app.dart`, `core/router`, `core/database`, `features/` hoặc placeholder scaffold. Nếu muốn refactor sang cấu trúc khác, thống nhất trước.
 
----
+**Quyền sở hữu:** SV-A ghi model/service và `ui/tasks/`; SV-B ghi categories/statistics/settings. `main.dart`, `pubspec.yaml`, drawer và database entry là vùng tích hợp chung. Không ghi vào bảng của phần bạn học.
 
-## 4. Bước chung ở ngày 1-2: dựng "bộ khung" rồi đóng băng
+## 4. Ngày 1–2: chuyển tiếp codebase labs
 
-Đây là bước **duy nhất** hai người làm chung. Làm xong thì mỗi người tách ra làm riêng, và đây cũng là nguồn xung đột chính nên phải làm kỹ.
+- [x] Flutter setup, Android/iOS, Provider, GoRouter, theme, MultiProvider, drawer và cấu trúc models/services/ui đã có.
+- [x] Dependencies `path`, `sqflite`, `shared_preferences`, `intl` đã có; không cài lại.
+- [ ] Chốt domain đích và phần auth/bán hàng cần gỡ hoặc giữ.
+- [ ] Chốt schema mới; tạo database service riêng cho Task/Habit và Category, không tái sử dụng bảng cart.
+- [ ] Nối route mới vào GoRouter và provider mới vào MultiProvider hiện hữu.
+- [ ] Chỉ thêm dependencies còn thiếu và đã thống nhất: local notifications/timezone, chart/lịch.
+- [ ] Xác nhận app chạy sau chuyển tiếp; commit nền và thống nhất file chung.
 
-- [ ] Tạo repo GitHub, project Flutter, thống nhất quy tắc commit
-- [ ] **`pubspec.yaml`: thêm TẤT CẢ thư viện cần dùng một lần** (`go_router`, `provider`, `sqflite`, `path`, `shared_preferences`, `flutter_local_notifications`, `timezone`, `fl_chart`, `intl`, ...), tránh sau này hai người cùng sửa file này
-- [ ] `database_helper.dart`: tạo sẵn **cả hai bảng** (`tasks`, `categories`), thêm dữ liệu danh mục mặc định
-- [ ] `app_router.dart`: khai báo **tất cả route** trỏ tới màn hình tạm (`Placeholder`), mỗi màn hình tạm nằm trong file của người sở hữu
-- [ ] `app.dart`: đăng ký sẵn **toàn bộ Provider** (`MultiProvider`) bằng lớp rỗng; mỗi người sau đó chỉ viết nội dung bên trong lớp của mình
-- [ ] `main.dart`: gọi sẵn `NotificationService.init()` (lớp rỗng của SV-A)
-- [ ] Hai người cùng viết `Task` và `Category` (tên cột, kiểu dữ liệu) theo bảng ở mục 6
-
-Sau ngày 2: **commit "skeleton-done", đóng băng các file 🔒 CHUNG.**
-
----
+Không cần tạo repo/project Flutter mới, `app.dart`, router, provider tree hay placeholder scaffold.
 
 ## 5. Lịch theo ngày (mỗi cột làm độc lập)
 
-### 📅 TUẦN 1: Dựng nền và chức năng lõi (ngày 1-7)
+### 📅 TUẦN 1: Chuyển nền và chức năng lõi (ngày 1–7)
 
 | Ngày | 🟦 SV-A (Công việc) | 🟩 SV-B (Danh mục / Thống kê / Cài đặt) |
 |---|---|---|
-| 1-2 | **Cùng nhau:** dựng bộ khung (mục 4) | |
+| 1-2 | **Cùng nhau:** chốt domain/schema, tách luồng shop, nối màn mới vào router/provider có sẵn |
 | 3 | `Task`, `TaskRepository` (CRUD SQLite) | `Category`, `CategoryRepository` (CRUD SQLite) |
 | 4 | `TaskProvider` (tải/thêm/sửa/xóa/hoàn thành) | `CategoryProvider`, `SettingsProvider` (`shared_preferences`) |
 | 5 | Màn Danh sách (`ListView`, `TaskTile`, tab lọc) | Theme sáng/tối, Splash, khung `BottomNavigationBar` + `ShellRoute` |
@@ -212,8 +197,8 @@ main                    ← chỉ chứa bản ổn định, luôn chạy đư�
 
 | Rủi ro | Cách xử lý |
 |---|---|
-| Hai người cùng sửa `pubspec.yaml` | Thêm toàn bộ thư viện ở ngày 1; cần thêm sau thì báo nhau và làm PR riêng |
-| Hai người cùng sửa `app_router.dart` / `app.dart` | Khai báo sẵn tất cả ở bộ khung rồi đóng băng |
+| Hai người cùng sửa `pubspec.yaml` | Gói nền đã có; chỉ dependency còn thiếu mới cần PR tích hợp |
+| Hai người cùng sửa route/provider/drawer trong `main.dart` | Tích hợp chung vào GoRouter/MultiProvider đang có; không tạo app/router thứ hai |
 | Đổi cấu trúc bảng giữa chừng | Chốt bảng ở ngày 1-2; muốn đổi phải có cả hai đồng ý, tăng `version` CSDL và xóa dữ liệu máy ảo |
 | SV-B xong sớm | Nhận thêm màn **Lịch** hoặc hỗ trợ viết unit test, tài liệu |
 | SV-A bị quá tải | Chuyển màn Lịch/thống kê nâng cao sang SV-B, rút gọn lọc nâng cao |
@@ -224,11 +209,12 @@ main                    ← chỉ chứa bản ổn định, luôn chạy đư�
 
 ## 10. Checklist
 
-**Ngày 2 (bộ khung)**
-- [ ] `pubspec.yaml` có đủ thư viện
-- [ ] Tất cả route, Provider, bảng CSDL đã khai báo sẵn
-- [ ] App chạy được với các màn hình tạm
-- [ ] Đóng băng file chung, mỗi người tạo branch riêng
+**Ngày 2 (chuyển tiếp nền đã có)**
+- [x] Flutter project, Provider/GoRouter, theme/drawer, `path`/SQLite/preferences đã có trong labs.
+- [ ] Chốt domain/schema và tách luồng bán hàng khỏi app đích.
+- [ ] Nối route/provider mới vào composition hiện tại; app vẫn chạy.
+- [ ] Chỉ thêm dependency thực sự còn thiếu.
+- [ ] File tích hợp chung được thống nhất; mỗi người tạo branch riêng.
 
 **Tuần 1**
 - [ ] Mỗi người CRUD SQLite cho bảng của mình

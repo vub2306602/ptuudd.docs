@@ -1,6 +1,6 @@
-﻿# Đặc tả giao diện theo ảnh demo
+# Đặc tả giao diện theo ảnh demo
 
-> Tham chiếu ảnh trong [thư mục anh](anh/). Các ảnh là mockup của ứng dụng theo dõi thói quen. Kế hoạch chức năng hiện tại đang gọi sản phẩm TaskFlow và tập trung vào công việc/danh mục/thống kê/cài đặt; vì vậy tài liệu này chốt cách dùng ngôn ngữ giao diện và ánh xạ màn hình, đồng thời đánh dấu phần mở rộng cần nhóm xác nhận phạm vi.
+> Codebase là repository `26-27hk1-ct48401-labs-thangb2306582` ở thư mục ngang cấp với `project`. Đây là app bán hàng đã có Provider/GoRouter/theme/drawer, không phải counter scaffold. Mockup là Habit Tracker; các module products/cart/orders không phải tính năng đích. Ảnh gốc ở [thư mục anh](../anh/).
 
 ## 1. Đọc bộ ảnh demo
 

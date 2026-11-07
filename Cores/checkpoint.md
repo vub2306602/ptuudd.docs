@@ -1,4 +1,4 @@
-﻿# Checkpoint dự án TaskFlow trong 3 tuần
+# Checkpoint dự án TaskFlow trong 3 tuần
 
 > Theo dõi tiến độ, chất lượng và phối hợp của hai sinh viên trong 21 ngày. Kế hoạch nguồn: [phan-cong-3-tuan.md](phan-cong-3-tuan.md).
 
@@ -13,35 +13,37 @@
 
 | Mốc | Mục tiêu | SV-A | SV-B | Bằng chứng / ghi chú |
 |---|---|---|---|---|
-| Ngày 1–2 | Chốt hợp đồng dữ liệu, dependencies, khung app, route, Provider, database; ứng dụng chạy | ☐ | ☐ | |
+| Ngày 1–2 | Chốt domain/schema, tách luồng bán hàng, nối màn mới vào router/provider hiện có | ☐ | ☐ |
 | Ngày 7 | CRUD và màn lõi chạy với SQLite; báo cáo tuần 1 | ☐ | ☐ | |
 | Ngày 14 | Ghép luồng chính, hoàn thiện chức năng, chạy trên emulator | ☐ | ☐ | |
 | Ngày 17 | Sửa lỗi, cấu hình ứng dụng, APK chạy trên thiết bị | ☐ | ☐ | |
 | Ngày 21 | Demo, báo cáo, kiểm tra cuối và nộp | ☐ | ☐ | |
 
+## Hiện trạng codebase đã có (không giao làm lại)
+
+Codebase labs `../26-27hk1-ct48401-labs-thangb2306582` đã có Flutter project Android/iOS, `lib/models`, `lib/services`, `lib/ui`, auth/products/cart/orders, Provider, GoRouter, theme, drawer, SQLite riêng cho cart, cùng `path` và `shared_preferences`. Phần mới còn thiếu: model/service/UI Task hoặc Habit, Category, schema/database riêng, route/provider cho domain mới và dependencies notification/chart nếu được chọn.
+
 ## Checkpoint 0 — Khởi động và kiểm kê hiện trạng
 
-- [ ] Cả hai clone cùng repository và chạy được Flutter scaffold hiện tại.
+- [ ] Hai sinh viên mở codebase labs và chạy được app hiện tại.
 - [ ] Điền tên, MSSV, kênh liên lạc, giờ họp ngắn và người tích hợp.
-- [ ] Xác nhận phiên bản Flutter/Dart và thiết bị/emulator mục tiêu.
-- [ ] Ghi nhận baseline: `lib/main.dart` là counter demo; `pubspec.yaml` mới có Flutter và `cupertino_icons`; chưa có router, provider, SQLite hay feature TaskFlow.
-- [ ] Chốt ngày bắt đầu/kết thúc thật cho 21 ngày; ngày trong kế hoạch là ngày tương đối.
+- [ ] Ghi phiên bản Flutter/Dart, thiết bị/emulator và ngày bắt đầu 21 ngày.
+- [ ] Xác nhận module hiện tại là auth/products/cart/orders; chốt phần hạ tầng giữ lại và phần bán hàng sẽ tách/gỡ.
+- [ ] Chốt domain mới theo mockup và kế hoạch chức năng trước khi đổi model/schema.
 
 **Biên bản:** Ngày ____ · Người ghi ____ · Commit nền ____ · Vướng mắc ____
 
-## Checkpoint 1 — Ngày 2: đóng bộ khung
+## Checkpoint 1 — Ngày 2: chuyển tiếp nền có sẵn
 
-- [ ] `pubspec.yaml` có dependency đã thống nhất; `pub get` thành công.
-- [ ] Có `app.dart`, `core/router`, `core/database`, theme và cấu trúc `features/`.
-- [ ] Schema `tasks`/`categories`, quy tắc xóa danh mục và hợp đồng model được cả hai duyệt.
-- [ ] Route và Provider tối thiểu được đăng ký; màn placeholder điều hướng được.
-- [ ] Ứng dụng build/run được sau khi khởi tạo khung.
-- [ ] Tạo commit `chore: skeleton-done`; ghi các file chung đã đóng băng.
-- [ ] Mỗi người tạo branch riêng và nắm quyền sở hữu file.
+- [x] Flutter setup, Provider, GoRouter, theme, drawer, `path`, `sqflite`, `shared_preferences`, `intl` đã có; không tạo/cài lại.
+- [ ] Chốt domain/schema mới; database nghiệp vụ tách biệt với `cart_items`.
+- [ ] Nối route mới vào GoRouter và đăng ký provider trong MultiProvider hiện hữu.
+- [ ] Tách luồng products/cart/orders khỏi app đích theo quyết định nhóm; auth chỉ giữ nếu cần.
+- [ ] Chỉ thêm dependency còn thiếu đã thống nhất (notifications/timezone/chart/lịch).
+- [ ] App build/run được sau chuyển tiếp; ghi file chung và commit tích hợp nền.
+- [ ] Mỗi sinh viên tạo branch riêng.
 
-**Gate:** Chưa bắt đầu phát triển độc lập nếu app chưa chạy hoặc hợp đồng dữ liệu chưa thống nhất.
-
-**Biên bản:** Ngày ____ · Commit ____ · Link PR ____ · Quyết định schema ____ · Vướng mắc ____
+**Gate:** Feature bắt đầu sau khi app vẫn chạy, domain/schema và quyền sửa file chung đã được chốt.
 
 ## Checkpoint 2 — Ngày 7: kết thúc tuần 1
 
