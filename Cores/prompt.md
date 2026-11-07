@@ -1,62 +1,108 @@
-# Prompt giao việc trên codebase labs
+﻿# Prompt giao việc và hỗ trợ hai sinh viên
 
-Dùng prompt này trong repository `26-27hk1-ct48401-labs-thangb2306582`. Project đã có sẵn Flutter setup, Android/iOS, Provider, GoRouter, theme, drawer, models/services/ui, SQLite cho cart, cùng `path` và `shared_preferences`. Đây là app bán hàng; code đích chưa có tính năng TaskFlow hoặc Category.
+Sao chép prompt phù hợp và điền phần trong ngoặc vuông. Yêu cầu AI làm đúng phạm vi đã phân công, không làm thay phần của bạn học.
 
-## Prompt giao một task cho SV-A hoặc SV-B
+## Prompt chung — khởi động dự án
 
 ```text
-Bạn là trợ lý lập trình cho app di động nhóm 2 sinh viên, làm trong 21 ngày.
+Bạn là trợ lý kỹ thuật cho dự án Flutter TaskFlow do 2 sinh viên thực hiện trong 21 ngày.
 
-Codebase hiện tại là dự án Flutter labs bán hàng. Đã có Flutter setup, Android/iOS, Provider, GoRouter, theme, drawer, `lib/models`, `lib/services`, `lib/ui`, `path`, `sqflite`, `shared_preferences`, `intl`. `main.dart` chứa router/theme/MultiProvider. SQLite cart ở `cart_sqlite_service.dart` chỉ phục vụ bảng cart_items. Chưa có Task, Category hay database nghiệp vụ chung. Chưa có local notifications/timezone/chart.
+Bối cảnh repository:
+- Ứng dụng hiện mới là Flutter counter scaffold; chưa có router, provider, SQLite hay feature TaskFlow.
+- Kế hoạch gốc: ptuudd.docs/phan-cong-3-tuan.md.
+- SV-A sở hữu features/tasks: Task CRUD, danh sách/form/chi tiết, tìm kiếm-lọc, thông báo.
+- SV-B sở hữu features/categories, features/statistics, features/settings: danh mục CRUD, thống kê, cài đặt/theme, shell/navigation và tùy biến app.
+- Ngày 1–2 cùng dựng khung; sau đó hạn chế sửa file chung. Schema tasks/categories là hợp đồng chung.
 
-Trước khi sửa:
-1. Đọc README, pubspec, main.dart và các file liên quan; xác nhận trạng thái code thực tế.
-2. Đọc tài liệu trong `project/ptuudd.docs/Cores/` (phan-cong-3-tuan.md, thiet-ke-giao-dien.md, next_step_guide.md); repo hiện tại là thư mục labs.
-3. Không tạo lại Flutter project, router, provider tree hoặc dependencies đã có. Không dùng cart database làm schema cho domain mới.
-4. Domain đã chốt là TaskFlow quản lý công việc; ảnh Habit Tracker chỉ làm tham khảo giao diện. Làm đúng sở hữu SV-A/SV-B.
+Nhiệm vụ:
+1. Đọc file liên quan và xác nhận hiện trạng; không giả định tính năng đã tồn tại.
+2. Tóm tắt mục tiêu, phạm vi file, dependency/API và quyết định phải tuân theo.
+3. Chỉ thực hiện phần được giao: [MÔ TẢ TASK]. Người làm: [SV-A hoặc SV-B].
+4. Không sửa vùng sở hữu của người còn lại. Nếu cần sửa file chung, nêu đề xuất và lý do để nhóm review.
+5. Giữ tương thích với schema/route/provider đã thống nhất; không tự đổi tên cột, kiểu dữ liệu hoặc dependency.
+6. Khi xong, nêu file đã đổi, hành vi, cách chạy/kiểm tra, kết quả và việc còn lại. Không tuyên bố đã kiểm tra nếu chưa chạy.
 
-Task duy nhất: [MÔ TẢ TASK]
-Người sở hữu: [SV-A hoặc SV-B]
+Ràng buộc môi trường/SDK/thiết bị/quy ước:
+[ĐIỀN THÔNG TIN]
+```
+
+## Prompt SV-A — một hạng mục Công việc/Thông báo
+
+```text
+Bạn hỗ trợ SV-A trong dự án Flutter TaskFlow. Phạm vi SV-A là features/tasks: model Task, TaskRepository, TaskProvider, UI danh sách/form/chi tiết, route task, tìm kiếm-lọc, NotificationService và responsive phần công việc.
+
+Xác minh hiện trạng từ file: repository ban đầu chỉ có counter scaffold; không giả định kiến trúc đã hoàn tất. Đọc ptuudd.docs/phan-cong-3-tuan.md và code liên quan trước khi sửa.
+
+Hạng mục duy nhất: [TASK CỤ THỂ]
 Checkpoint: [NGÀY/MỐC]
 Tiêu chí chấp nhận: [ĐIỀU KIỆN QUAN SÁT ĐƯỢC]
 
 Quy tắc:
-- Chỉ sửa vùng của người sở hữu. File `main.dart`, `pubspec.yaml`, drawer và database entry là vùng tích hợp chung; nếu cần sửa, giải thích diff và gom vào thay đổi tích hợp.
-- Tái sử dụng Provider/GoRouter/theme hiện có; thêm route/provider mới vào composition hiện tại.
-- Chỉ thêm dependency chưa có sau khi xác nhận gói cần thiết và tương thích.
-- Không tuyên bố đã chạy kiểm tra nếu chưa chạy.
+- Chỉ ghi trong features/tasks và file riêng đã được nhóm giao.
+- Không thay đổi app.dart, main.dart, router, database helper, pubspec.yaml hay schema nếu chưa có quyết định chung.
+- Dùng hợp đồng dữ liệu đã chốt; dùng Theme.of(context); đọc danh mục theo giao diện database đã thống nhất.
+- Giữ logic dữ liệu trong repository/provider, không viết SQL trong widget.
+- Notification phải xử lý quyền/runtime và vòng đời thêm-sửa-xóa-hoàn thành; nêu giới hạn OS.
 
-Kết thúc bằng danh sách file đổi, hành vi, cách kiểm tra/kết quả và việc còn lại.
+Báo cáo cuối: file đổi, luồng đã làm, cách kiểm tra thực tế, kết quả và phần còn thiếu. Nếu thiếu thông tin hợp đồng, nêu quyết định cần nhóm thống nhất thay vì tự bịa.
 ```
 
-## Prompt review PR
+## Prompt SV-B — một hạng mục Danh mục/Thống kê/Cài đặt
 
 ```text
-Review diff sau trên codebase labs đã có Provider, GoRouter, theme, drawer và SQLite chỉ cho cart.
+Bạn hỗ trợ SV-B trong dự án Flutter TaskFlow. Phạm vi SV-B là features/categories, features/statistics, features/settings: Category CRUD, CategoryProvider, SettingsProvider/preferences, StatsRepository/StatsProvider, UI, theme, shell/navigation và tùy biến app được giao.
 
+Xác minh hiện trạng từ file: repository ban đầu chỉ có counter scaffold; không giả định kiến trúc đã hoàn tất. Đọc ptuudd.docs/phan-cong-3-tuan.md và code liên quan trước khi sửa.
+
+Hạng mục duy nhất: [TASK CỤ THỂ]
+Checkpoint: [NGÀY/MỐC]
+Tiêu chí chấp nhận: [ĐIỀU KIỆN QUAN SÁT ĐƯỢC]
+
+Quy tắc:
+- Chỉ ghi trong features/categories, features/statistics, features/settings và file riêng đã được nhóm giao.
+- Không thay đổi app.dart, main.dart, router, database helper, pubspec.yaml hay schema nếu chưa có quyết định chung.
+- Thống kê truy vấn SQLite trực tiếp theo hợp đồng, không phụ thuộc TaskProvider.
+- Khi xóa danh mục, cập nhật category_id của công việc liên quan về NULL một cách nhất quán.
+- Cài đặt phải tồn tại sau khi khởi động lại; UI hỗ trợ loading/empty/error phù hợp.
+
+Báo cáo cuối: file đổi, luồng đã làm, cách kiểm tra thực tế, kết quả và phần còn thiếu. Nếu thiếu thông tin hợp đồng, nêu quyết định cần nhóm thống nhất thay vì tự bịa.
+```
+
+## Prompt review PR chéo
+
+```text
+Review PR này như người cùng nhóm, tập trung vào lỗi có thể gây hỏng tính năng hoặc tích hợp.
+
+Phạm vi PR: [MÔ TẢ]
 Người sở hữu: [SV-A/SV-B]
-Task: [MÔ TẢ]
-Diff/file: [DÁN DIFF HOẶC ĐƯỜNG DẪN]
+Diff: [DÁN DIFF HOẶC ĐƯỜNG DẪN]
 
-Kiểm tra regression, quyền sở hữu file, tích hợp route/provider, schema/database mới có bị lẫn với cart_items không, loading/empty/error, ngày giờ/thông báo/theme/responsive nếu liên quan. Nêu lỗi P0/P1/P2 kèm file/dòng; ghi phần chưa thể xác minh và không tự nhận đã chạy app.
+Kiểm tra:
+1. Có vi phạm quyền sở hữu file hoặc hợp đồng schema/route/provider không?
+2. Luồng dữ liệu, nullability, ngày giờ, lỗi SQLite và loading/empty/error có hợp lý không?
+3. Có regression, vấn đề quyền notification, dark mode hoặc responsive dễ thấy không?
+4. Có đủ bằng chứng/cách chạy để xác nhận không?
+
+Trả lời theo P0/P1/P2, trích file/dòng cụ thể khi có thể. Nếu không thấy vấn đề, nêu phạm vi review và điều chưa thể xác minh; không tự tuyên bố đã chạy code.
 ```
 
 ## Prompt cập nhật checkpoint
 
 ```text
-Cập nhật `ptuudd.docs/Cores/checkpoint.md` từ dữ liệu dưới đây. Codebase nền đã có Flutter, Provider, GoRouter, theme, drawer, SQLite cart, path và shared_preferences; không ghi các phần này là việc còn phải dựng.
+Hãy giúp tôi cập nhật checkpoint dự án từ dữ liệu sau. Không tự đánh dấu hoàn thành nếu thiếu bằng chứng.
 
-Mốc/ngày: [MỐC]
+Ngày/mốc: [MỐC]
 Người cập nhật: [SV-A/SV-B/CẢ HAI]
 Task đã làm: [DANH SÁCH]
 Commit/PR: [LINK/TÊN]
 Đã chạy trên và kết quả: [THÔNG TIN]
 Lỗi/vướng mắc: [DANH SÁCH]
-Việc tiếp theo: [DANH SÁCH]
+Kế hoạch tiếp theo: [DANH SÁCH]
 
-Chỉ đánh dấu xong khi có bằng chứng; phân loại đúng tiến độ/có nguy cơ trễ/trễ.
+Trả lời theo mẫu trong ptuudd.docs/checkpoint.md; phân loại đúng tiến độ/có nguy cơ trễ/trễ và nêu điều chỉnh cần thiết.
 ```
+
 
 ## Đặc tả giao diện theo ảnh demo
 
-Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). TaskFlow là domain chính; ảnh Habit Tracker chỉ tham khảo bố cục/màu sắc. Không thêm habit logs, streak, điểm thưởng hoặc đăng nhập vào phạm vi bắt buộc.
+Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). Ảnh mô tả một Habit Tracker trong khi kế hoạch chức năng đang là TaskFlow; hãy giữ rõ ánh xạ và không thêm streak/điểm thưởng/đăng nhập vào phạm vi bắt buộc nếu nhóm chưa chốt domain và thời gian.
