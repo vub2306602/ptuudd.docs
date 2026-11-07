@@ -113,3 +113,8 @@ Kết quả / bằng chứng:
 Rủi ro hoặc phần chưa xong:
 Người review:
 ```
+
+
+## Đặc tả giao diện theo ảnh demo
+
+Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). Ảnh mô tả một Habit Tracker trong khi kế hoạch chức năng đang là TaskFlow; hãy giữ rõ ánh xạ và không thêm streak/điểm thưởng/đăng nhập vào phạm vi bắt buộc nếu nhóm chưa chốt domain và thời gian.
