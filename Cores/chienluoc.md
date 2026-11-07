@@ -4,9 +4,9 @@
 
 ## 1. Hiện trạng và mục tiêu
 
-Codebase để kế thừa là `../26-27hk1-ct48401-labs-thangb2306582`, không phải project counter scaffold. Labs đã có Flutter Android/iOS, `models/services/ui`, Provider, GoRouter, theme, drawer, SQLite riêng cho giỏ hàng, cùng `path` và `shared_preferences`. Đây là ứng dụng bán hàng: chưa có Task/Habit, Category, database/schema chung hay tính năng đích. `flutter_local_notifications`, `timezone`, `fl_chart` chưa có. Không tạo project/router/provider mới; cần tách luồng bán hàng, chốt domain và bổ sung phần còn thiếu. `main.dart` đang chứa router, theme và MultiProvider.
+Codebase để kế thừa là `../26-27hk1-ct48401-labs-thangb2306582`, không phải project counter scaffold. Labs đã có Flutter Android/iOS, `models/services/ui`, Provider, GoRouter, theme, drawer, SQLite riêng cho giỏ hàng, cùng `path` và `shared_preferences`. Đây là ứng dụng bán hàng: chưa có TaskFlow, Category, database/schema chung hay tính năng đích. `flutter_local_notifications`, `timezone`, `fl_chart` chưa có. Không tạo project/router/provider mới; tách luồng bán hàng và bổ sung các tính năng TaskFlow còn thiếu. `main.dart` đang chứa router, theme và MultiProvider.
 
-Mục tiêu 21 ngày: chuyển codebase labs thành sản phẩm theo domain đã chốt (Habit Tracker theo ảnh demo hoặc TaskFlow), lưu trữ cục bộ, có danh mục, nhắc, thống kê/cài đặt theo phạm vi, APK cài thử, báo cáo và demo.
+Mục tiêu 21 ngày: chuyển codebase labs thành TaskFlow quản lý công việc; ảnh Habit Tracker chỉ cung cấp cảm hứng về bố cục, màu sắc và thẻ tiến độ; TaskFlow lưu trữ cục bộ, có danh mục, nhắc, thống kê/cài đặt theo phạm vi, APK cài thử, báo cáo và demo.
 
 ## 2. Nguyên tắc tổ chức
 
@@ -21,7 +21,7 @@ Mục tiêu 21 ngày: chuyển codebase labs thành sản phẩm theo domain đ�
 
 | Vai trò | Phạm vi sở hữu | Đầu ra bắt buộc |
 |---|---|---|
-| SV-A — Công việc/thói quen, nhắc việc | Model/service/provider và `ui/tasks/`; danh sách/trang chủ, form, chi tiết, tìm kiếm/lọc, notification, responsive | CRUD SQLite, trạng thái mục, nhắc theo vòng đời, tài liệu và demo |
+| SV-A — Công việc, nhắc việc | Model/service/provider và `ui/tasks/`; danh sách/trang chủ, form, chi tiết, tìm kiếm/lọc, notification, responsive | CRUD SQLite, trạng thái mục, nhắc theo vòng đời, tài liệu và demo |
 | SV-B — Danh mục, thống kê, cài đặt | Category CRUD; thống kê SQLite; theme/cài đặt; điều hướng/drawer; tùy biến app | Category CRUD, số liệu/biểu đồ, dark mode, menu điều hướng, tài liệu và demo |
 | Cả hai | Chuyển tiếp nền labs ngày 1–2, schema, tích hợp, review, báo cáo, demo | App chạy sau merge; hợp đồng dữ liệu rõ ràng |
 
@@ -37,7 +37,7 @@ Mục tiêu 21 ngày: chuyển codebase labs thành sản phẩm theo domain đ�
 
 ### Tuần 1 — chuyển nền và chức năng lõi (ngày 1–7)
 
-- Ngày 1–2: chạy code labs, chốt domain đích, phần bán hàng/auth cần tách, schema và quyền sở hữu; nối màn mới vào GoRouter/MultiProvider hiện có. Không dựng lại project/router/provider.
+- Ngày 1–2: chạy code labs, xác định phần bán hàng/auth cần tách, schema và quyền sở hữu; nối màn mới vào GoRouter/MultiProvider hiện có. Không dựng lại project/router/provider.
 - Ngày 3–4: mỗi người làm model, service/repository SQLite và provider của phần mình.
 - Ngày 5–7: hoàn thành màn lõi. SV-A ưu tiên trang chủ/danh sách, form, chi tiết; SV-B ưu tiên shell/theme, danh mục và cài đặt.
 - Cuối tuần: dữ liệu thật, persistence sau khởi động, PR và báo cáo.
@@ -68,7 +68,7 @@ Mục tiêu 21 ngày: chuyển codebase labs thành sản phẩm theo domain đ�
 
 ### P0 — bắt buộc
 
-App labs chạy sau chuyển tiếp; schema/database domain mới; Task/Habit CRUD và persistence; Category CRUD; điều hướng cơ bản; build Android; báo cáo và demo.
+App labs chạy sau chuyển tiếp; schema/database domain mới; Task CRUD và persistence; Category CRUD; điều hướng cơ bản; build Android; báo cáo và demo.
 
 ### P1 — mục tiêu chính
 
@@ -84,7 +84,7 @@ Nếu có nguy cơ trễ, báo ngay trong checkpoint. Giảm P2 trước; tiếp
 
 | Rủi ro | Cách giảm thiểu |
 |---|---|
-| Code labs có kiến trúc nhưng thuộc domain bán hàng | Giữ hạ tầng chung; tách products/cart/orders và xây domain mới, không nhầm dữ liệu shop với Task/Habit |
+| Code labs có kiến trúc nhưng thuộc domain bán hàng | Giữ hạ tầng chung; tách products/cart/orders và xây domain mới, không nhầm dữ liệu shop với TaskFlow |
 | Xung đột file chung | Chốt route/provider/schema/dependencies ngày 1–2; review mọi thay đổi tiếp theo |
 | Thư viện/cấu hình khó tương thích | Chạy `pub get` và build sớm; chọn phiên bản phù hợp SDK; tránh nâng major tùy tiện |
 | Thông báo bị giới hạn bởi Android/quyền runtime | Xin quyền và thử thiết bị thật từ ngày 9, lặp lại ngày 16; ghi kết quả theo OS |
@@ -99,4 +99,4 @@ Hạng mục xong khi code đã merge, chạy trong app, dữ liệu/điều hư
 
 ## Đặc tả giao diện theo ảnh demo
 
-Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). Ảnh mô tả một Habit Tracker trong khi kế hoạch chức năng đang là TaskFlow; hãy giữ rõ ánh xạ và không thêm streak/điểm thưởng/đăng nhập vào phạm vi bắt buộc nếu nhóm chưa chốt domain và thời gian.
+Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). TaskFlow là domain chính; ảnh Habit Tracker chỉ tham khảo bố cục/màu sắc. Không thêm habit logs, streak, điểm thưởng hoặc đăng nhập vào phạm vi bắt buộc.

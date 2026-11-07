@@ -13,7 +13,7 @@
 
 | Mốc | Mục tiêu | SV-A | SV-B | Bằng chứng / ghi chú |
 |---|---|---|---|---|
-| Ngày 1–2 | Chốt domain/schema, tách luồng bán hàng, nối màn mới vào router/provider hiện có | ☐ | ☐ |
+| Ngày 1–2 | Chốt schema TaskFlow, tách luồng bán hàng, nối màn mới vào router/provider hiện có | ☐ | ☐ | |
 | Ngày 7 | CRUD và màn lõi chạy với SQLite; báo cáo tuần 1 | ☐ | ☐ | |
 | Ngày 14 | Ghép luồng chính, hoàn thiện chức năng, chạy trên emulator | ☐ | ☐ | |
 | Ngày 17 | Sửa lỗi, cấu hình ứng dụng, APK chạy trên thiết bị | ☐ | ☐ | |
@@ -21,7 +21,7 @@
 
 ## Hiện trạng codebase đã có (không giao làm lại)
 
-Codebase labs `../26-27hk1-ct48401-labs-thangb2306582` đã có Flutter project Android/iOS, `lib/models`, `lib/services`, `lib/ui`, auth/products/cart/orders, Provider, GoRouter, theme, drawer, SQLite riêng cho cart, cùng `path` và `shared_preferences`. Phần mới còn thiếu: model/service/UI Task hoặc Habit, Category, schema/database riêng, route/provider cho domain mới và dependencies notification/chart nếu được chọn.
+Codebase labs `../26-27hk1-ct48401-labs-thangb2306582` đã có Flutter project Android/iOS, `lib/models`, `lib/services`, `lib/ui`, auth/products/cart/orders, Provider, GoRouter, theme, drawer, SQLite riêng cho cart, cùng `path` và `shared_preferences`. Phần mới còn thiếu: model/service/UI Task, Category, schema/database riêng, route/provider cho domain mới và dependencies notification/chart nếu được chọn.
 
 ## Checkpoint 0 — Khởi động và kiểm kê hiện trạng
 
@@ -29,14 +29,14 @@ Codebase labs `../26-27hk1-ct48401-labs-thangb2306582` đã có Flutter project 
 - [ ] Điền tên, MSSV, kênh liên lạc, giờ họp ngắn và người tích hợp.
 - [ ] Ghi phiên bản Flutter/Dart, thiết bị/emulator và ngày bắt đầu 21 ngày.
 - [ ] Xác nhận module hiện tại là auth/products/cart/orders; chốt phần hạ tầng giữ lại và phần bán hàng sẽ tách/gỡ.
-- [ ] Chốt domain mới theo mockup và kế hoạch chức năng trước khi đổi model/schema.
+- [ ] TaskFlow đã được chọn; mockup Habit Tracker chỉ dùng làm tham khảo giao diện.
 
 **Biên bản:** Ngày ____ · Người ghi ____ · Commit nền ____ · Vướng mắc ____
 
 ## Checkpoint 1 — Ngày 2: chuyển tiếp nền có sẵn
 
 - [x] Flutter setup, Provider, GoRouter, theme, drawer, `path`, `sqflite`, `shared_preferences`, `intl` đã có; không tạo/cài lại.
-- [ ] Chốt domain/schema mới; database nghiệp vụ tách biệt với `cart_items`.
+- [ ] Schema TaskFlow được chốt; database nghiệp vụ tách biệt với `cart_items`.
 - [ ] Nối route mới vào GoRouter và đăng ký provider trong MultiProvider hiện hữu.
 - [ ] Tách luồng products/cart/orders khỏi app đích theo quyết định nhóm; auth chỉ giữ nếu cần.
 - [ ] Chỉ thêm dependency còn thiếu đã thống nhất (notifications/timezone/chart/lịch).
@@ -125,4 +125,4 @@ Trạng thái: đúng tiến độ / có nguy cơ trễ / trễ
 
 ## Đặc tả giao diện theo ảnh demo
 
-Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). Ảnh mô tả một Habit Tracker trong khi kế hoạch chức năng đang là TaskFlow; hãy giữ rõ ánh xạ và không thêm streak/điểm thưởng/đăng nhập vào phạm vi bắt buộc nếu nhóm chưa chốt domain và thời gian.
+Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). TaskFlow là domain chính; ảnh Habit Tracker chỉ tham khảo bố cục/màu sắc. Không thêm habit logs, streak, điểm thưởng hoặc đăng nhập vào phạm vi bắt buộc.

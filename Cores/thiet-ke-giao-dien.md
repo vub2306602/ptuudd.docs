@@ -27,26 +27,29 @@
 - **Điều hướng:** drawer như ảnh 090007 là mẫu tham khảo. Trên điện thoại có thể dùng drawer kết hợp bottom navigation rút gọn; tránh đưa toàn bộ 9 mục lên thanh đáy.
 - **Khả năng đọc:** chữ tương phản đạt mức dễ đọc, vùng chạm đủ lớn, trạng thái không chỉ dựa vào màu (kèm nhãn/icon).
 
-## 3. Bản đồ màn hình và chủ sở hữu
+## 3. Ánh xạ mockup sang TaskFlow
 
-| Màn hình | Thành phần chính theo ảnh | Chủ sở hữu đề xuất | Ưu tiên |
+| Màn hình TaskFlow | Ý tưởng lấy từ ảnh | Điều chỉnh cho nghiệp vụ công việc | Owner / ưu tiên |
 |---|---|---|---|
-| Trang chủ | Lời chào, ngày hiện tại, nút `+`, chip Thể loại/Lịch/Tìm kiếm, nhóm Hôm nay/Ngày mai/Trong tuần, tiến độ hoàn tất | SV-A; SV-B sở hữu shell/theme | P0 |
-| Tạo/sửa mục | Tên, ghi chú, thể loại, ngày/giờ, mức ưu tiên, lịch lặp/nhắc | SV-A | P0 |
-| Chi tiết mục | Thông tin, trạng thái, lịch sử/ngày thực hiện, chỉnh sửa/xóa | SV-A | P0 |
-| Lịch và lời nhắc | Lịch chọn ngày, danh sách mục theo thời gian, thao tác hoàn thành/sửa/xóa | SV-A; route/shell chung do SV-B | P1 |
-| Thể loại | Grid thẻ màu, icon, tên và số lượng; thêm/sửa/xóa bằng dialog | SV-B | P0 |
-| Cài đặt | Theme sáng/tối, thời gian nhắc mặc định, thông tin app | SV-B | P0 |
-| Nhật ký | Danh sách thói quen; empty state có minh họa/CTA | SV-A nếu đổi định hướng sang thói quen; nếu giữ TaskFlow thì dùng cho lịch sử công việc hoàn thành | P1 |
-| Chi tiết thói quen | Mục tiêu, lịch lặp, tiến độ và lịch đánh dấu ngày | SV-A; cần xác nhận domain habit | P2 |
-| Thống kê | Số liệu tổng quan và biểu đồ theo tuần, cùng phong cách thẻ pastel | SV-B | P1 |
-| Mục tiêu | Checklist mục tiêu ngày/tuần | SV-A hoặc SV-B theo quyết định domain | P2 |
-| Streak / Điểm thưởng | Lịch chuỗi ngày, xu và đổi thưởng | Chưa phân công; chỉ làm khi có duyệt phạm vi | P2 |
-| Drawer | Hồ sơ/đăng nhập và danh sách khu vực | SV-B | P1 |
+| Trang chủ / danh sách | 085953: lời chào, nút thêm, chip nhanh, nhóm theo ngày, tiến độ | Hôm nay/Ngày mai/Trong tuần; hiện hạn, ưu tiên, category và trạng thái; nhóm có thể thu gọn | SV-A / P0 |
+| Drawer | 090007: menu khu vực | Công việc, Danh mục, Lịch, Thống kê, Cài đặt; bỏ đăng nhập/bạn bè/phần thưởng nếu không cần | SV-B / P1 |
+| Lịch và lời nhắc | 090011: lịch + danh sách mục theo thời gian | Hiển thị task theo due date, chọn ngày để lọc; tránh đồng hồ trang trí chiếm diện tích | SV-A + SV-B / P1 |
+| Danh mục | 090015: grid card pastel, icon, số lượng | Category công việc; số lượng task còn mở; màu/icon phân biệt nhưng không là tín hiệu duy nhất | SV-B / P0 |
+| Empty state / công việc hoàn tất | 090022/090025: empty state và list card | Empty state khuyến khích tạo task; có thể thêm lịch sử task hoàn thành thay cho nhật ký thói quen | SV-A / P1 |
+| Chi tiết công việc | 090029: chi tiết, tiến độ và lịch ngày | Mô tả, hạn, ưu tiên, category, trạng thái, reminder; lịch nhỏ chỉ khi tăng giá trị | SV-A / P0 |
+| Thống kê | 090034/090040: số liệu và lịch tô điểm | Tổng task, hoàn thành, quá hạn, tiến độ tuần; không thêm xu/streak/bạn bè | SV-B / P1 |
+| Mục tiêu | 090037: checklist ngày/tuần | Dùng danh sách task theo hạn; không cần model mục tiêu riêng trong bản đầu | SV-A / P2 |
+| Cài đặt | Phong cách chung của mockup | Theme sáng/tối, thời gian nhắc mặc định, thông tin app | SV-B / P0 |
 
-### Ánh xạ domain để không hiểu nhầm
+Ảnh là tham khảo thị giác, không phải yêu cầu sao chép tính năng Habit Tracker. TaskFlow giữ model `Task` và `Category` như kế hoạch; không tạo `Habit`, `HabitLog`, recurrence/streak hay điểm thưởng trong phạm vi cơ bản.
 
-Nếu giữ TaskFlow theo phân công hiện tại, `task` được gọi thân thiện là “công việc/mục tiêu”, Nhật ký có thể là lịch sử hoàn thành, còn streak/điểm thưởng/đăng nhập/bạn bè là ý tưởng tham khảo chưa thuộc P0. Nếu nhóm muốn app là Habit Tracker như mockup, cần thống nhất lại model (thói quen, lịch lặp, lần thực hiện), schema, phân công và mục tiêu 21 ngày trước khi code; không nên chỉ đổi nhãn UI trong khi dữ liệu vẫn mang ngữ nghĩa khác.
+### Cải tiến so với mockup
+
+- Ưu tiên thứ bậc thông tin: tiêu đề và hạn trước, mô tả phụ sau; badge “Quá hạn”, “Hôm nay”, “Ưu tiên cao” rõ ràng.
+- Dùng màu pastel làm nền thẻ/nhấn, giữ chữ có tương phản; trạng thái luôn kèm icon/nhãn.
+- Nút thêm task nổi bật; hoàn thành bằng checkbox; sửa/xóa ở chi tiết hoặc menu có xác nhận.
+- Bỏ chữ có bóng/viền xanh trong mockup nếu ảnh hưởng khả năng đọc; giảm trang trí đồng hồ/illustration khi không hỗ trợ thao tác.
+- Trang chủ tập trung vào công việc đến hạn và tiến độ hôm nay; thống kê dùng số liệu thực từ SQLite.
 
 ## 4. Component dùng chung
 
@@ -74,10 +77,10 @@ Thông số khởi điểm để nhóm tinh chỉnh: khoảng đệm màn 16–2
 
 ## 6. Thứ tự triển khai thiết kế
 
-1. Ngày 1–2: chốt domain (TaskFlow hay Habit Tracker), palette, typography, component cơ bản, drawer/shell và breakpoint.
-2. Tuần 1: hoàn thành trang chủ, form, chi tiết, danh mục, cài đặt; dùng dữ liệu SQLite thật.
-3. Tuần 2: lịch/lời nhắc, thống kê, empty/error/loading states, responsive và polish theo ảnh.
-4. Tuần 3: sửa lỗi thị giác trên thiết bị thật, chụp ảnh màn hình báo cáo, không thêm P2 nếu ảnh hưởng build/nộp.
+1. Ngày 1–2: thiết kế cho TaskFlow; chốt palette, typography, component cơ bản, drawer/shell và breakpoint.
+2. Tuần 1: hoàn thành trang chủ, form, chi tiết, danh mục, cài đặt bằng dữ liệu SQLite thật.
+3. Tuần 2: lịch/lời nhắc, thống kê, loading/empty/error states, responsive và polish theo ảnh.
+4. Tuần 3: sửa lỗi thị giác trên thiết bị thật, chụp ảnh báo cáo; không thêm Habit P2.
 
 ## 7. Checklist review UI
 

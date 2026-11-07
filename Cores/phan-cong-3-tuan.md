@@ -55,7 +55,7 @@ Codebase labs để kế thừa: `../26-27hk1-ct48401-labs-thangb2306582`.
 ```text
 lib/
 ├── main.dart                  ← 🔒 CHUNG: router, theme, MultiProvider hiện đặt ở đây
-├── models/                    ← thêm Task/Habit và Category; model shop là code cũ
+├── models/                    ← thêm Task và Category; model shop là code cũ
 ├── services/                  ← thêm service/repository cho domain mới
 └── ui/
     ├── shared/app_drawer.dart ← drawer hiện có, chỉnh điều hướng
@@ -75,8 +75,8 @@ Không cần tạo project Flutter mới, `app.dart`, `core/router`, `core/datab
 
 - [x] Flutter setup, Android/iOS, Provider, GoRouter, theme, MultiProvider, drawer và cấu trúc models/services/ui đã có.
 - [x] Dependencies `path`, `sqflite`, `shared_preferences`, `intl` đã có; không cài lại.
-- [ ] Chốt domain đích và phần auth/bán hàng cần gỡ hoặc giữ.
-- [ ] Chốt schema mới; tạo database service riêng cho Task/Habit và Category, không tái sử dụng bảng cart.
+- [x] TaskFlow là domain đích; chốt phần auth/bán hàng cần gỡ hoặc giữ.
+- [ ] Chốt schema mới; tạo database service riêng cho Task và Category, không tái sử dụng bảng cart.
 - [ ] Nối route mới vào GoRouter và provider mới vào MultiProvider hiện hữu.
 - [ ] Chỉ thêm dependencies còn thiếu và đã thống nhất: local notifications/timezone, chart/lịch.
 - [ ] Xác nhận app chạy sau chuyển tiếp; commit nền và thống nhất file chung.
@@ -89,7 +89,7 @@ Không cần tạo repo/project Flutter mới, `app.dart`, router, provider tree
 
 | Ngày | 🟦 SV-A (Công việc) | 🟩 SV-B (Danh mục / Thống kê / Cài đặt) |
 |---|---|---|
-| 1-2 | **Cùng nhau:** chốt domain/schema, tách luồng shop, nối màn mới vào router/provider có sẵn |
+| 1-2 | **Cùng nhau:** chốt schema TaskFlow, tách luồng shop, nối màn mới vào router/provider có sẵn |
 | 3 | `Task`, `TaskRepository` (CRUD SQLite) | `Category`, `CategoryRepository` (CRUD SQLite) |
 | 4 | `TaskProvider` (tải/thêm/sửa/xóa/hoàn thành) | `CategoryProvider`, `SettingsProvider` (`shared_preferences`) |
 | 5 | Màn Danh sách (`ListView`, `TaskTile`, tab lọc) | Theme sáng/tối, Splash, khung `BottomNavigationBar` + `ShellRoute` |
@@ -211,7 +211,8 @@ main                    ← chỉ chứa bản ổn định, luôn chạy đư�
 
 **Ngày 2 (chuyển tiếp nền đã có)**
 - [x] Flutter project, Provider/GoRouter, theme/drawer, `path`/SQLite/preferences đã có trong labs.
-- [ ] Chốt domain/schema và tách luồng bán hàng khỏi app đích.
+- [x] TaskFlow là domain đã chốt.
+- [ ] Chốt schema và tách luồng bán hàng khỏi app đích.
 - [ ] Nối route/provider mới vào composition hiện tại; app vẫn chạy.
 - [ ] Chỉ thêm dependency thực sự còn thiếu.
 - [ ] File tích hợp chung được thống nhất; mỗi người tạo branch riêng.
@@ -238,4 +239,4 @@ main                    ← chỉ chứa bản ổn định, luôn chạy đư�
 
 ## Đặc tả giao diện theo ảnh demo
 
-Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). Ảnh mô tả một Habit Tracker trong khi kế hoạch chức năng đang là TaskFlow; hãy giữ rõ ánh xạ và không thêm streak/điểm thưởng/đăng nhập vào phạm vi bắt buộc nếu nhóm chưa chốt domain và thời gian.
+Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). TaskFlow là domain chính; ảnh Habit Tracker chỉ làm tham khảo giao diện. Không thêm habit logs, streak, điểm thưởng hoặc đăng nhập vào phạm vi bắt buộc.
