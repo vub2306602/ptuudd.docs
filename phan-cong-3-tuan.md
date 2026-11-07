@@ -248,3 +248,8 @@ main                    ← chỉ chứa bản ổn định, luôn chạy đư�
 - [ ] Mỗi người có đủ commit trên GitHub
 - [ ] Mỗi người giải thích được toàn bộ dự án
 - [ ] Nộp báo cáo hoàn chỉnh
+
+
+## Đặc tả giao diện theo ảnh demo
+
+Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). Ảnh mô tả một Habit Tracker trong khi kế hoạch chức năng đang là TaskFlow; hãy giữ rõ ánh xạ và không thêm streak/điểm thưởng/đăng nhập vào phạm vi bắt buộc nếu nhóm chưa chốt domain và thời gian.

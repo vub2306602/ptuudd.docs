@@ -119,3 +119,8 @@ Commit/PR hoặc ảnh/video minh chứng:
 Cần người kia hỗ trợ:
 Trạng thái: đúng tiến độ / có nguy cơ trễ / trễ
 ```
+
+
+## Đặc tả giao diện theo ảnh demo
+
+Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). Ảnh mô tả một Habit Tracker trong khi kế hoạch chức năng đang là TaskFlow; hãy giữ rõ ánh xạ và không thêm streak/điểm thưởng/đăng nhập vào phạm vi bắt buộc nếu nhóm chưa chốt domain và thời gian.

@@ -96,3 +96,8 @@ Nếu có nguy cơ trễ, báo ngay trong checkpoint. Giảm P2 trước; tiếp
 ## 8. Định nghĩa hoàn thành
 
 Hạng mục xong khi code đã merge, chạy trong app, dữ liệu/điều hướng liên quan hoạt động, có ghi nhận kiểm tra, lỗi chặn được ghi nhận và người kia hiểu cách dùng/hợp đồng của nó. Mốc chi tiết ở [checkpoint.md](checkpoint.md).
+
+
+## Đặc tả giao diện theo ảnh demo
+
+Thiết kế màn hình theo [thiet-ke-giao-dien.md](thiet-ke-giao-dien.md), đối chiếu các ảnh gốc trong [anh/](anh/). Ảnh mô tả một Habit Tracker trong khi kế hoạch chức năng đang là TaskFlow; hãy giữ rõ ánh xạ và không thêm streak/điểm thưởng/đăng nhập vào phạm vi bắt buộc nếu nhóm chưa chốt domain và thời gian.
