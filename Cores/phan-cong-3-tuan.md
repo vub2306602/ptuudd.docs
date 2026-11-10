@@ -5,8 +5,8 @@
 
 ## 1. Hiện trạng và phạm vi
 
-- `lib/main.dart` đã khởi chạy khung TaskFlow; dashboard, theme, router và màn hình khung danh mục/thống kê/cài đặt đã có.
-- SQLite schema, model/repository/provider danh mục và provider cài đặt đã được tạo; UI CRUD danh mục hiện đã nối provider/repository; CRUD công việc, thông báo và các luồng dữ liệu còn lại chưa hoàn thiện.
+- `lib/main.dart` đã khởi chạy TaskFlow; dashboard, theme, router và màn hình danh mục/thống kê/cài đặt đã có.
+- SQLite schema, model/repository/provider danh mục và provider cài đặt đã được tạo; UI CRUD danh mục nối provider/repository, màn cài đặt lưu tùy chọn theme/thời gian nhắc; CRUD công việc, thông báo và các luồng dữ liệu còn lại chưa hoàn thiện.
 - `pubspec.yaml` đã khai báo `sqflite`, `path`, `provider`, `shared_preferences` và `go_router`; dependency thông báo/biểu đồ chưa được chọn.
 - Phạm vi đề xuất là ứng dụng quản lý công việc (TaskFlow): công việc, danh mục, thống kê và cài đặt. Ảnh Habit Tracker trong tài liệu thiết kế chỉ là tham khảo; streak, điểm thưởng, đăng nhập và bạn bè không nằm trong phạm vi bắt buộc.
 - Mục tiêu cuối: app chạy được, lưu dữ liệu cục bộ, hoàn thành luồng công việc chính, có bản Android để demo và báo cáo. Nếu yêu cầu môn học hoặc thời gian thực tế khác, hai bạn thống nhất điều chỉnh trước khi triển khai.
@@ -210,7 +210,7 @@ phải thời điểm hạn chính xác.
 - **Ngày 4 (đã triển khai):** hoàn thiện `category_provider.dart`; triển khai `settings_provider.dart` để đọc/lưu theme và thời gian nhắc mặc định bằng `shared_preferences`.
 - **Ngày 5 (đã triển khai):** hoàn thiện theme pastel sáng/tối và `lib/core/router/app_router.dart`; tạo route cho task, danh mục, thống kê và cài đặt; các màn task chưa làm xong dùng placeholder.
 - **Ngày 6 (đã triển khai):** làm màn CRUD danh mục trong `lib/features/categories/ui/categories_page.dart`; đọc dữ liệu qua provider/repository, hỗ trợ thêm/sửa tên và màu pastel, xác nhận trước khi xóa; có loading, empty, error/retry và phản hồi thao tác.
-- **Ngày 7:** hoàn thiện màn cài đặt và tích hợp dữ liệu danh mục; chạy thử app/route; bảo đảm xóa danh mục không làm hỏng công việc liên quan.
+- **Ngày 7 (đã kiểm tra):** hoàn thiện màn cài đặt theme/thời gian nhắc mặc định bằng `SettingsProvider`/`SharedPreferences`; kiểm thử đổi và đọc lại tùy chọn qua route. Đã chạy thử các route chính; kiểm thử SQLite xác nhận xóa danh mục giữ task và đặt `category_id = NULL`.
 
 **Bàn giao cuối tuần 1:** app khởi động được; SQLite tạo đúng hai bảng; danh mục CRUD được; cài đặt theme/thời gian nhắc được lưu; các route chính mở được.
 
