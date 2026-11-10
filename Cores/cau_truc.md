@@ -8,16 +8,79 @@ thư mục `Cores`.
 
 Mã nguồn và kế hoạch cần được phân biệt rõ:
 
-- `lib/main.dart` hiện là ứng dụng Flutter mẫu có bộ đếm (`Flutter Demo`), chưa
-  phải giao diện TaskFlow.
-- `lib/app.dart` cùng các file trong `core/` và `features/` đã có trong cấu trúc
-  thư mục nhưng hiện đang rỗng (0 byte). Chúng là các vị trí dự kiến để triển
-  khai kiến trúc và chức năng được mô tả trong tài liệu `Cores`.
-- `pubspec.yaml` hiện chỉ khai báo Flutter và `cupertino_icons`; các thư viện
-  router, quản lý trạng thái, SQLite, lưu tùy chọn, biểu đồ và thông báo chưa
-  được khai báo.
-- Vì vậy, các chức năng dưới đây là **vai trò dự kiến theo kế hoạch**, không có
-  nghĩa là đã được triển khai hoặc chạy được.
+- `lib/main.dart` hiện vẫn là ứng dụng Flutter mẫu có bộ đếm (`Flutter Demo`),
+  chưa phải giao diện TaskFlow; `lib/app.dart` đang rỗng.
+- Các file trong `lib/core/` và `lib/features/` đã được tạo nhưng hiện rỗng
+  (0 byte). Đây mới là vị trí dự kiến để triển khai kiến trúc và chức năng.
+- `pubspec.yaml` hiện có Flutter và `cupertino_icons` trong dependencies;
+  `provider`, `go_router`, `sqflite`, `path` và `shared_preferences` chưa được
+  khai báo. Các package biểu đồ và thông báo cũng chưa được chọn/cài đặt.
+- Chưa có schema SQLite hoặc route thực tế được triển khai. Schema trong
+  [`schema.md`](./schema.md) và route bên dưới là **đề xuất hợp đồng tích hợp
+  Ngày 1–2**, cần hai thành viên xác nhận trước khi code; không phải trạng thái
+  hệ thống hiện tại.
+- `test/widget_test.dart` vẫn kiểm thử counter mẫu, nên cần được thay bằng kiểm
+  thử phù hợp sau khi entry point chuyển sang app TaskFlow.
+
+### Hợp đồng tích hợp đề xuất cho Ngày 1–2
+
+#### Schema SQLite
+
+DDL SQLite đầy đủ, quy ước kiểu dữ liệu và chính sách khóa ngoại được duy trì
+trong [`schema.md`](./schema.md). Model `Task`/`Category` và repository cần
+dùng thống nhất tên cột trong tài liệu đó, chuyển đổi qua `fromMap`/`toMap`.
+
+#### Dependencies
+
+Đây là bộ package đề xuất cho MVP, chưa được thêm vào project:
+
+| Package | Mục đích |
+|---|---|
+| `sqflite` | Lưu trữ SQLite trên thiết bị |
+| `path` | Tạo đường dẫn file database |
+| `provider` | Quản lý state và cung cấp provider cho UI |
+| `go_router` | Khai báo và điều hướng route |
+| `shared_preferences` | Lưu cài đặt đơn giản như theme/thời gian nhắc mặc định |
+
+Thống nhất bộ package và phiên bản tương thích trước khi cập nhật
+`pubspec.yaml`; sau đó chạy `flutter pub get` để cập nhật `pubspec.lock`.
+Dependency thông báo và biểu đồ có thể được chọn khi bắt đầu triển khai các
+chức năng đó, không cần thêm chỉ để dựng entry point.
+
+#### Routes
+
+Đề xuất dùng `go_router`; tên/path cần được A và B dùng thống nhất:
+
+| Tên route | Path | Ý nghĩa |
+|---|---|---|
+| `tasks` | `/tasks` | Danh sách công việc, route khởi đầu |
+| `task-create` | `/tasks/new` | Tạo công việc |
+| `task-detail` | `/tasks/:id` | Chi tiết công việc |
+| `task-edit` | `/tasks/:id/edit` | Sửa công việc |
+| `categories` | `/categories` | Quản lý danh mục |
+| `statistics` | `/statistics` | Thống kê |
+| `settings` | `/settings` | Cài đặt |
+
+Route chi tiết và sửa nhận `id` của task. Trong khi màn hình thật chưa sẵn
+sàng, dùng placeholder để các route vẫn mở được.
+
+#### Entry point
+
+`lib/main.dart` chỉ khởi động ứng dụng, còn `lib/app.dart` là composition root
+chứa cấu hình `MaterialApp.router`, theme và provider cấp ứng dụng. Mục tiêu
+sau khi triển khai:
+
+```dart
+import 'package:flutter/material.dart';
+import 'app.dart';
+
+void main() {
+  runApp(const TaskFlowApp());
+}
+```
+
+Sau khi đổi entry point, xóa counter mẫu khỏi ứng dụng và thay đổi
+`widget_test.dart` để kiểm tra khung app/route thay vì hành vi tăng counter.
 
 ## 2. Cấu trúc tổng quan
 
@@ -109,15 +172,15 @@ lib/
 
 | File | Chức năng |
 |---|---|
-| `lib/main.dart` | Điểm vào ứng dụng, gọi `runApp`. **Hiện tại:** khởi chạy `MyApp` mẫu với màn hình bộ đếm. **Dự kiến:** chuyển sang khởi tạo cấu hình và hiển thị app composition trong `app.dart`. |
-| `lib/app.dart` | Thành phần gốc của ứng dụng. Dự kiến khai báo MaterialApp, theme sáng/tối, router và đăng ký/cung cấp các provider dùng chung. **Hiện tại:** file rỗng. |
+| `lib/main.dart` | Điểm vào ứng dụng. **Hiện tại:** khởi chạy `MyApp` mẫu với màn hình bộ đếm. **Dự kiến:** gọi `runApp(const TaskFlowApp())` từ `app.dart`; giữ file này làm entry point mỏng. |
+| `lib/app.dart` | Thành phần gốc/composition root của ứng dụng. Dự kiến khai báo `MaterialApp.router`, theme sáng/tối, router và đăng ký/cung cấp các provider dùng chung. **Hiện tại:** file rỗng. |
 
 ### Hạ tầng dùng chung — `lib/core/`
 
 | File | Chức năng dự kiến |
 |---|---|
-| `lib/core/database/database_helper.dart` | Khởi tạo và quản lý SQLite; định nghĩa phiên bản, schema các bảng `tasks`/`categories`, dữ liệu mặc định và migration khi schema thay đổi. Là đầu mối dùng chung cho repository. **Hiện tại:** file rỗng. |
-| `lib/core/router/app_router.dart` | Khai báo các đường dẫn và điều hướng giữa các màn hình. Kế hoạch đề cập các route như danh sách/tạo/chi tiết công việc, danh mục, thống kê và cài đặt; truyền ID hoặc dữ liệu cần thiết giữa màn hình. **Hiện tại:** file rỗng. |
+| `lib/core/database/database_helper.dart` | Khởi tạo và quản lý SQLite; định nghĩa phiên bản, schema hai bảng theo hợp đồng ở mục 1, bật khóa ngoại và migration khi schema thay đổi. Là đầu mối dùng chung cho repository. **Hiện tại:** file rỗng; schema chưa được triển khai. |
+| `lib/core/router/app_router.dart` | Khai báo các đường dẫn/name theo bảng Routes ở mục 1; truyền ID cho route chi tiết/sửa và dùng placeholder cho màn chưa có. **Hiện tại:** file rỗng; router chưa được triển khai. |
 
 ### Công việc — `lib/features/tasks/`
 
@@ -132,7 +195,7 @@ lib/
 
 | File | Chức năng dự kiến |
 |---|---|
-| `lib/features/categories/data/category.dart` | Model `Category` và chuyển đổi dữ liệu danh mục giữa Dart/SQLite. Danh mục có thể cung cấp tên, màu, biểu tượng và mã định danh theo schema nhóm thống nhất. |
+| `lib/features/categories/data/category.dart` | Model `Category` và chuyển đổi dữ liệu danh mục giữa Dart/SQLite. Theo schema đề xuất, model có mã định danh, tên, màu tùy chọn và thời điểm tạo; nếu bổ sung biểu tượng thì cần cập nhật hợp đồng schema. |
 | `lib/features/categories/data/category_repository.dart` | Tầng truy cập dữ liệu danh mục: đọc, thêm, sửa, xóa danh mục. Khi xóa, cần đảm bảo các công việc liên quan có `category_id` được đặt về `NULL` theo hợp đồng dữ liệu. |
 | `lib/features/categories/providers/category_provider.dart` | Giữ trạng thái danh mục và cung cấp thao tác tải/CRUD cho giao diện quản lý danh mục; báo trạng thái loading/error phù hợp. |
 
@@ -159,6 +222,8 @@ lib/
 | File | Vai trò |
 |---|---|
 | `cau_truc.md` | Tài liệu này: tổng quan cấu trúc dự án và chức năng các file `lib`, kèm phân biệt trạng thái mã nguồn với kế hoạch. |
+| `tieuchi.md` | Tiêu chí đánh giá/nghiệm thu TaskFlow, yêu cầu triển khai và nguyên tắc làm cơ sở cho các thay đổi tiếp theo. |
+| `schema.md` | DDL SQLite và quy ước dữ liệu dự kiến cho hai bảng `categories` và `tasks`; hiện là đề xuất, chưa triển khai trong app. |
 | `chienluoc.md` | Chiến lược triển khai TaskFlow trong ba tuần, nguyên tắc kiến trúc, phân công, mức ưu tiên, rủi ro và tiêu chí hoàn thành. |
 | `phan-cong-3-tuan.md` | Kế hoạch phân công công việc theo vai trò và thời gian ba tuần. |
 | `next_step_guide.md` | Hướng dẫn thao tác theo ngày/tuần, trình tự dựng khung và phát triển, tích hợp, xử lý lỗi và chuẩn bị demo. |
