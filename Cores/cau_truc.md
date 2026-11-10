@@ -18,11 +18,14 @@ Mã nguồn và kế hoạch cần được phân biệt rõ:
   được chọn/cài đặt.
 - Router đã có các route chính; dashboard, danh mục, thống kê, cài đặt có giao
   diện theo mockup. Màn danh mục đã tải/lưu qua provider và SQLite, hỗ trợ CRUD;
-  form/chi tiết task vẫn là placeholder.
+  màn cài đặt chọn theme/thời gian nhắc mặc định; form/chi tiết task vẫn là
+  placeholder.
 - Database được mở khi repository danh mục được gọi; CRUD danh mục đã nối vào
   giao diện. Màn có loading, empty, error/retry và xác nhận trước khi xóa.
-- `test/widget_test.dart` kiểm tra dashboard, điều hướng và luồng thêm/sửa/xóa
-  danh mục bằng repository giả; không còn kiểm tra counter mẫu.
+- `test/widget_test.dart` kiểm tra dashboard, route chính, lưu/đọc lại tùy chọn
+  cài đặt và luồng thêm/sửa/xóa danh mục bằng repository giả. Test SQLite cũng
+  xác nhận xóa danh mục không xóa task liên quan, chỉ đặt `category_id` thành
+  `NULL`; không còn kiểm tra counter mẫu.
 
 ### Hợp đồng tích hợp và trạng thái triển khai
 
@@ -201,6 +204,10 @@ lib/
 | File | Chức năng dự kiến |
 |---|---|
 | `lib/features/settings/providers/settings_provider.dart` | Quản lý `ThemeMode` và thời gian nhắc mặc định (số phút trước hạn, mặc định 15 phút); đọc/lưu bằng `shared_preferences`, báo loading/error và ném lại lỗi để caller xử lý. **Hiện tại:** đã triển khai và đăng ký vào app. |
+
+`SettingsPage` trong `lib/core/router/app_pages.dart` cho phép chọn theme
+hệ thống/sáng/tối và thời gian nhắc trước hạn; màn đã nối `SettingsProvider`
+và được kiểm thử qua route.
 
 ### Thống kê — `lib/features/statistics/`
 
