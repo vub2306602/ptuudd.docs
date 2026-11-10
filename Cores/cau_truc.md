@@ -16,16 +16,16 @@ Mã nguồn và kế hoạch cần được phân biệt rõ:
 - `pubspec.yaml` hiện khai báo `sqflite`, `path`, `provider`,
   `shared_preferences` và `go_router`. Các package biểu đồ và thông báo chưa
   được chọn/cài đặt.
-- Router đã có các route chính; dashboard, danh mục, thống kê, cài đặt có giao
-  diện theo mockup. Màn danh mục đã tải/lưu qua provider và SQLite, hỗ trợ CRUD;
-  màn cài đặt chọn theme/thời gian nhắc mặc định; form/chi tiết task vẫn là
-  placeholder.
+- Router đã có các route chính; dashboard/danh sách, form và chi tiết task hiện
+  được nối với TaskProvider/TaskRepository/SQLite. Màn danh mục hỗ trợ CRUD;
+  cài đặt lưu theme/thời gian nhắc mặc định. Thống kê vẫn là giao diện số liệu
+  mẫu; local notification chưa được triển khai.
 - Database được mở khi repository danh mục được gọi; CRUD danh mục đã nối vào
   giao diện. Màn có loading, empty, error/retry và xác nhận trước khi xóa.
-- `test/widget_test.dart` kiểm tra dashboard, route chính, lưu/đọc lại tùy chọn
-  cài đặt và luồng thêm/sửa/xóa danh mục bằng repository giả. Test SQLite cũng
-  xác nhận xóa danh mục không xóa task liên quan, chỉ đặt `category_id` thành
-  `NULL`; không còn kiểm tra counter mẫu.
+- Các test hiện có bao phủ cài đặt, danh mục và quy tắc khóa ngoại. Sau khi
+  dashboard/form/chi tiết được nối dữ liệu thật, `widget_test.dart` còn kỳ vọng
+  nội dung dashboard và route task placeholder cũ; cần cập nhật trước khi dùng
+  làm bằng chứng nghiệm thu phần Task.
 
 ### Hợp đồng tích hợp và trạng thái triển khai
 
@@ -57,15 +57,15 @@ Router `go_router` đã được triển khai với tên/path sau:
 | Tên route | Path | Ý nghĩa |
 |---|---|---|
 | `tasks` | `/tasks` | Dashboard/danh sách công việc, route khởi đầu |
-| `task-create` | `/tasks/new` | Placeholder tạo công việc |
-| `task-detail` | `/tasks/:id` | Placeholder chi tiết, nhận ID |
-| `task-edit` | `/tasks/:id/edit` | Placeholder sửa, nhận ID |
+| `task-create` | `/tasks/new` | Form tạo công việc |
+| `task-detail` | `/tasks/:id` | Chi tiết công việc theo ID |
+| `task-edit` | `/tasks/:id/edit` | Form sửa công việc theo ID |
 | `categories` | `/categories` | Quản lý danh mục |
 | `statistics` | `/statistics` | Thống kê |
 | `settings` | `/settings` | Cài đặt |
 
-Route chi tiết và sửa nhận `id` của task. Màn tạo/sửa/chi tiết hiện dùng
-placeholder để route mở được trong khi tính năng task đang chờ triển khai.
+Route chi tiết và sửa nhận `id` của task; trang chi tiết/form xử lý trường hợp
+không tìm thấy ID bằng trạng thái lỗi và đường quay lại.
 
 #### Entry point
 
@@ -144,9 +144,13 @@ lib/
         │   ├── task.dart
         │   └── task_repository.dart
         ├── notifications/
-        │   └── notification_service.dart
-        └── providers/
-            └── task_provider.dart
+        │   └── notification_service.dart  # chưa triển khai
+        ├── providers/
+        │   └── task_provider.dart
+        └── ui/
+            ├── tasks_page.dart
+            ├── task_form_page.dart
+            └── task_detail_page.dart
 ```
 
 ### Ý nghĩa các tầng
@@ -177,18 +181,21 @@ lib/
 | File | Chức năng dự kiến |
 |---|---|
 | `lib/core/database/database_helper.dart` | Khởi tạo và quản lý SQLite; định nghĩa version 1 và schema hai bảng theo [`schema.md`](./schema.md), bật khóa ngoại. **Hiện tại:** đã triển khai tạo/mở database và schema; migration cho các version tương lai chưa được bổ sung. |
-| `lib/core/router/app_router.dart` | Khai báo route/name cho dashboard, tạo/sửa/chi tiết task, danh mục, thống kê và cài đặt; route task nhận ID. **Hiện tại:** đã triển khai `go_router`; route task chưa có chức năng thật dùng placeholder. |
-| `lib/core/router/app_pages.dart` | Shell điều hướng drawer/bottom bar và giao diện dashboard, thống kê, cài đặt cùng placeholder route task. **Hiện tại:** màn danh mục được tách sang feature UI; các màn task vẫn dùng placeholder. |
+| `lib/core/router/app_router.dart` | Khai báo route/name cho dashboard, tạo/sửa/chi tiết task, danh mục, thống kê và cài đặt; route task nhận ID. **Hiện tại:** các route task mở `TasksPage`, `TaskFormPage` và `TaskDetailPage`. |
+| `lib/core/router/app_pages.dart` | Shell điều hướng drawer/bottom bar và màn thống kê/cài đặt; route trang chủ dùng `TasksPage`. |
 | `lib/core/theme/app_theme.dart` | Palette pastel và theme Material 3 sáng/tối dùng chung. **Hiện tại:** đã triển khai theo định hướng ảnh mockup. |
 
 ### Công việc — `lib/features/tasks/`
 
-| File | Chức năng dự kiến |
+| File | Chức năng và trạng thái |
 |---|---|
-| `lib/features/tasks/data/task.dart` | Model `Task`, biểu diễn dữ liệu một công việc và chuyển đổi giữa đối tượng Dart với bản ghi SQLite; xử lý trường tùy chọn và ngày/giờ. |
-| `lib/features/tasks/data/task_repository.dart` | Tầng truy cập dữ liệu công việc: tải danh sách, thêm, sửa, xóa, truy vấn/lọc và cập nhật trạng thái hoàn thành qua SQLite. SQL không nên đặt trong widget. |
-| `lib/features/tasks/providers/task_provider.dart` | Quản lý trạng thái và nghiệp vụ công việc cho giao diện: tải dữ liệu, loading/error, CRUD, hoàn thành, tìm kiếm/lọc và thông báo thay đổi cho UI. |
-| `lib/features/tasks/notifications/notification_service.dart` | Đóng gói thao tác thông báo cục bộ: khởi tạo, quyền, timezone và lên lịch/hủy/cập nhật nhắc việc theo vòng đời công việc. Cần xử lý khác biệt quyền và giới hạn theo hệ điều hành. |
+| `lib/features/tasks/data/task.dart` | Model `Task` khớp schema SQLite, ánh xạ `fromMap`/`toMap`, xử lý ngày ISO 8601 và trường nullable. **Hiện tại:** đã triển khai. |
+| `lib/features/tasks/data/task_repository.dart` | Đọc danh sách/chi tiết, thêm, sửa, xóa, đánh dấu hoàn thành và lọc qua SQLite; không đặt SQL trong widget. **Hiện tại:** đã triển khai. |
+| `lib/features/tasks/providers/task_provider.dart` | Điều phối tải/CRUD/hoàn thành, bộ lọc và trạng thái loading/error. **Hiện tại:** đã triển khai và đăng ký trong app. |
+| `lib/features/tasks/ui/tasks_page.dart` | Danh sách công việc theo nhóm hạn, lọc trạng thái cơ bản, trạng thái rỗng/lỗi và `TaskTile`. **Hiện tại:** đã nối provider; tìm kiếm và lọc danh mục đầy đủ để ở tuần 2 theo phân công. |
+| `lib/features/tasks/ui/task_form_page.dart` | Form tạo/sửa, validation tiêu đề, ghi chú, ngày/giờ, ưu tiên, danh mục và thời điểm nhắc theo cài đặt. **Hiện tại:** đã nối provider. |
+| `lib/features/tasks/ui/task_detail_page.dart` | Chi tiết theo ID, hoàn thành/bỏ hoàn thành, sửa, xóa có xác nhận và ID không tồn tại. **Hiện tại:** đã nối provider. |
+| `lib/features/tasks/notifications/notification_service.dart` | Khởi tạo, quyền, timezone và lên/hủy/cập nhật local notification theo vòng đời task. **Hiện tại:** chưa triển khai; nằm trong kế hoạch tuần 2. |
 
 ### Danh mục — `lib/features/categories/`
 
@@ -216,10 +223,9 @@ và được kiểm thử qua route.
 | `lib/features/statistics/data/stats_repository.dart` | Tổng hợp số liệu từ SQLite, chủ yếu truy vấn bảng `tasks` theo hợp đồng schema; cung cấp dữ liệu tổng quan/tuần và xử lý trường hợp chưa có dữ liệu. |
 | `lib/features/statistics/providers/stats_provider.dart` | Tải và quản lý trạng thái dữ liệu thống kê cho màn hình; cung cấp loading/error/empty state và dữ liệu cho các thành phần số liệu/biểu đồ. |
 
-> `app_pages.dart` giữ shell, dashboard, thống kê, cài đặt và placeholder task.
-> CRUD danh mục đã có giao diện riêng tại `features/categories/ui/`; form/chi
-> tiết task, dữ liệu thật của các màn task/thống kê và các luồng nghiệp vụ còn
-> cần được triển khai.
+> `app_pages.dart` giữ shell, thống kê và cài đặt; giao diện task và danh mục
+> nằm trong các feature tương ứng. Task và category đã có luồng CRUD SQLite;
+> thống kê vẫn dùng dữ liệu mẫu và notification service chưa được triển khai.
 
 ## 5. Tài liệu trong `Docs/ptuudd.docs/Cores`
 

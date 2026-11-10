@@ -69,6 +69,75 @@
 
 **Biên bản tuần 1:** Ngày ____ · SV-A ____ · SV-B ____ · Build ____ · PR ____ · Điều chỉnh phạm vi ____
 
+### Báo cáo công việc tuần 1 — đối chiếu repository ngày 10/11/2026
+
+> Người ghi: SV-A (Thắng, theo phân công). Đây là bản tổng hợp trạng thái có thể
+> xác nhận từ mã nguồn và tài liệu hiện có, không phải xác nhận rằng các công việc
+> chưa có trong repository đã được thực hiện. Tiêu chí chi tiết lấy từ
+> [phan-cong-3-tuan.md](./phan-cong-3-tuan.md), trình tự từ
+> [next_step_guide.md](./next_step_guide.md), hợp đồng dữ liệu từ
+> [schema.md](./schema.md), kiến trúc hiện tại từ [cau_truc.md](./cau_truc.md)
+> và các yêu cầu nghiệm thu từ [tieuchi.md](./tieuchi.md).
+
+#### Phần nền tảng và tích hợp đã có trong mã nguồn
+
+- `pubspec.yaml` khai báo `sqflite`, `path`, `provider`, `shared_preferences`
+  và `go_router`.
+- Entry point TaskFlow, composition root, theme Material 3 sáng/tối và router
+  cho các khu vực chính đã có. Route công việc hiện mở danh sách, form tạo/sửa
+  và trang chi tiết đã nối với provider.
+- `DatabaseHelper` tạo SQLite version 1 với hai bảng `categories` và `tasks`,
+  bật khóa ngoại và dùng `ON DELETE SET NULL` cho `tasks.category_id`.
+- Phần SV-B đã có model/repository/provider/UI CRUD danh mục và provider lưu
+  theme cùng thời gian nhắc mặc định. Màn thống kê hiện vẫn là giao diện số liệu
+  mẫu; chưa có repository/provider thống kê thực.
+
+#### Phần SV-A — Công việc và nhắc việc
+
+| Đầu việc tuần 1 | Trạng thái theo repository | Ghi chú |
+|---|---|---|
+| Chốt schema, route và API tích hợp | Đã làm | Triển khai theo `schema.md` và API repository/provider trong `phan-cong-3-tuan.md`; giữ nguyên route đã khai báo. |
+| Model `Task` theo schema | Đã làm | `task.dart` ánh xạ đủ trường, null/date ISO 8601, trạng thái hoàn thành và priority 1–3. |
+| `TaskRepository` CRUD SQLite | Đã làm | `task_repository.dart` đọc danh sách/chi tiết, thêm, sửa, xóa, cập nhật hoàn thành và lọc theo trạng thái/danh mục/ngày. |
+| `TaskProvider` tải/CRUD/hoàn thành | Đã làm | `task_provider.dart` quản lý tasks, loading/error, CRUD và bộ lọc; ném lại lỗi cho UI. |
+| Danh sách và trạng thái rỗng | Đã làm một phần theo tuần 1 | `TasksPage` nối SQLite qua provider, giữ lọc trạng thái cơ bản, empty/error/retry và `TaskTile`; tìm kiếm/lọc danh mục đầy đủ được chuyển sang tuần 2 theo phân công. |
+| Form thêm/sửa và validation | Đã làm | Form kiểm tra tiêu đề, ghi chú, hạn ngày/giờ, ưu tiên, danh mục và thời điểm nhắc dựa trên cài đặt mặc định. |
+| Chi tiết, hoàn thành, xóa theo ID | Đã làm | Màn chi tiết tải theo ID, xử lý ID không tồn tại, sửa, hoàn thành/bỏ hoàn thành và xóa có xác nhận. |
+| Lưu task qua lần khởi động | Đã triển khai, chưa xác minh | Repository dùng SQLite chung; chưa chạy app để xác nhận dữ liệu sau khi đóng/mở lại. |
+| Notification service | Chưa làm — thuộc tuần 2 | `notification_service.dart` vẫn rỗng; form chỉ lưu `reminder_at`, chưa lên lịch thông báo hệ điều hành. |
+
+**Kết quả kiểm tra:** đã chạy `dart format` cho các file Dart thay đổi và
+`flutter analyze`; kết quả **No issues found**. Chưa chạy test suite, build hoặc
+app trên thiết bị, nên persistence qua lần khởi động và runtime chưa được xác
+nhận. Widget test hiện có vẫn kỳ vọng dashboard và task placeholder cũ; chưa
+cập nhật/chạy lại trong lần này. Không thấy bằng chứng commit/PR riêng cho phần
+SV-A trong tài liệu đang có.
+
+#### Việc cần hoàn thành tiếp theo của SV-A
+
+1. Chạy formatter/analyzer khi Dart CLI hoạt động bình thường; sửa mọi lỗi biên
+   dịch hoặc lint phát hiện được.
+2. Cập nhật test widget/repository vốn còn kỳ vọng UI placeholder, rồi kiểm tra
+   CRUD, validation, trường nullable, lọc và persistence.
+3. Sau khi luồng CRUD task ổn định, chốt package và triển khai local notification
+   theo kế hoạch tuần 2; hiện form chỉ lưu giá trị `reminder_at`.
+
+**Biên bản cập nhật:** 10/11/2026 · Người ghi: SV-A (Thắng) · Các đầu ra mã
+nguồn cốt lõi tuần 1 đã được triển khai; `flutter analyze` đạt · Chưa xác nhận
+app chạy/persistence bằng test hoặc thiết bị · Commit/PR: chưa có thông tin trong
+repository · Notification được chuyển sang tuần 2 theo kế hoạch.
+
+#### Rà soát phạm vi theo tuần — 10/11/2026
+
+- Giữ lại các luồng Task CRUD, giao diện trang chủ/danh sách và bộ lọc trạng thái cơ bản thuộc tuần 1.
+- Đã lùi tìm kiếm và lọc danh mục đầy đủ sang tuần 2. Các truy vấn hỗ trợ vẫn có trong repository/provider nhưng chưa được đưa lên giao diện tuần 1.
+- Đã gỡ các màn Lịch và Nhật ký cùng route/menu tương ứng; nút Lịch trên trang chủ chỉ thông báo kế hoạch tuần 2.
+- Thống kê thật/biểu đồ được lùi sang tuần 2; trang hiện tại vẫn là mẫu. Notification chưa lên lịch và tiếp tục thuộc tuần 2.
+- Cập nhật trang danh sách theo trạng thái: ở **Cần làm** dùng lời nhắc “Bắt đầu từ việc nhỏ!” và icon checklist; ở **Hoàn thành** dùng lời động viên cùng icon hoàn tất. Cả hai chế độ giữ thanh tiến độ và ẩn chip Danh mục/Lịch; chế độ **Tất cả** giữ nội dung hiện tại.
+- Thêm nút mũi tên quay lại ở các trang con; nếu không có trang trước thì quay về trang Công việc.
+- Kiểm tra gần nhất sau các thay đổi giao diện: `flutter analyze --no-pub` đạt, không có lỗi phân tích. Chưa chạy test hoặc build trong các lần chỉnh UI này.
+- Ghi chú này mô tả việc điều chỉnh mã nguồn trong lần rà soát, không đánh dấu nghiệm thu tuần 1 hoặc tuần 2.
+
 ## Checkpoint 3 — Ngày 14: kết thúc tuần 2
 
 - [ ] Tìm kiếm/lọc công việc và trạng thái rỗng/lỗi hoạt động.

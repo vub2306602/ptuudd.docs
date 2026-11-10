@@ -170,7 +170,11 @@ CRUD task/category vào toàn bộ giao diện vẫn đang được triển khai
 
 ## 4. Trạng thái tiêu chí
 
-**Trạng thái hiện tại theo mã nguồn đã kiểm tra:** chưa đạt các tiêu chí chức
-năng. Ứng dụng vẫn là counter mẫu; entry point TaskFlow, màn hình nghiệp vụ,
-router, state management, SQLite, lưu cài đặt và thông báo chưa được triển khai.
-Các mục trong tài liệu này là tiêu chí mục tiêu, không phải báo cáo nghiệm thu.
+**Trạng thái hiện tại theo repository ngày 10/11/2026:** entry point TaskFlow,
+router, Provider, SQLite version 1, CRUD Task/Category, danh sách/form/chi tiết
+Task và lưu cài đặt theme/thời gian nhắc đã có trong mã nguồn. Thống kê vẫn dùng
+số liệu mẫu; local notification chưa được triển khai. Chưa xác nhận build, chạy
+trên thiết bị hay persistence bằng lần khởi động lại trong lần cập nhật này; các
+widget test hiện có còn kỳ vọng màn task placeholder và cần đồng bộ. Các điều
+khoản khác ở tài liệu này vẫn là tiêu chí mục tiêu cho tới khi có bằng chứng
+nghiệm thu tương ứng.
