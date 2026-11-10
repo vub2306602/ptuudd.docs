@@ -50,7 +50,12 @@ Nếu giữ TaskFlow theo phân công hiện tại, `task` được gọi thân 
 
 ## 4. Component dùng chung
 
-SV-B định nghĩa style tokens/theme trong vùng chung ngày 1–2; SV-A sử dụng `Theme.of(context)` và component được thống nhất, không tự đặt màu tùy ý.
+Theme Material 3 sáng/tối, palette pastel và shell drawer/bottom navigation ban
+đầu đã được tạo trong `lib/core/theme/app_theme.dart` và
+`lib/core/router/app_pages.dart`, dựa trên ảnh mockup. SV-A sử dụng
+`Theme.of(context)` và component được thống nhất, không tự đặt màu tùy ý. Các
+màn khung hiện có chưa đồng nghĩa với việc luồng nghiệp vụ hoặc dữ liệu thật đã
+được nối.
 
 - `AppScaffold`: nền, vùng nội dung an toàn, app bar và drawer/shell.
 - `PastelCard`: nền màu semantic, bo góc, khoảng đệm nhất quán.
