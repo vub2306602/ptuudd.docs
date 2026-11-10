@@ -12,9 +12,9 @@ kê và cài đặt. Ưu tiên luồng nghiệp vụ cốt lõi, chạy ổn đ�
 các lần mở ứng dụng. Các ý tưởng streak, điểm thưởng, tài khoản/đăng nhập và
 mạng xã hội không thuộc phạm vi bắt buộc, trừ khi nhóm thống nhất bổ sung.
 
-Schema SQLite đề xuất gồm hai bảng `tasks` và `categories`, được mô tả trong
-[`schema.md`](./schema.md). Đây là thiết kế dự kiến, không được xem là đã triển
-khai cho tới khi có mã nguồn và kiểm thử xác nhận.
+Schema SQLite version 1 gồm hai bảng `tasks` và `categories`, được mô tả trong
+[`schema.md`](./schema.md) và đã được tạo bởi database helper. Việc tích hợp
+CRUD task/category vào toàn bộ giao diện vẫn đang được triển khai.
 
 ## 2. Tiêu chí đánh giá và cách nghiệm thu
 
@@ -119,6 +119,8 @@ khai cho tới khi có mã nguồn và kiểm thử xác nhận.
 - Các tùy chọn như theme hoặc thời gian nhắc mặc định được lưu bền vững bằng
   `shared_preferences` hoặc giải pháp đã thống nhất; không bắt buộc tạo thêm
   bảng cho các tùy chọn này.
+- Thời gian nhắc mặc định được biểu diễn bằng số phút trước hạn công việc; giá
+  trị ban đầu là 15 phút và 0 phút nghĩa là nhắc đúng thời điểm đến hạn.
 - Thay đổi schema sau khi đã có dữ liệu phải có version và migration; không xóa
   dữ liệu để né migration.
 

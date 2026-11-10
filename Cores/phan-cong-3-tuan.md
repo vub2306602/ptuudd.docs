@@ -5,9 +5,9 @@
 
 ## 1. Hiện trạng và phạm vi
 
-- Ứng dụng hiện vẫn là Flutter counter mẫu trong `lib/main.dart`.
-- Các thư mục và một số file của `core/`, `features/tasks/`, `features/categories/`, `features/statistics/`, `features/settings/` đã được tạo; phần chức năng chưa được triển khai hoàn chỉnh.
-- `pubspec.yaml` hiện mới có Flutter và `cupertino_icons`; router, state management, lưu trữ và các thư viện tính năng cần được bổ sung.
+- `lib/main.dart` đã khởi chạy khung TaskFlow; dashboard, theme, router và màn hình khung danh mục/thống kê/cài đặt đã có.
+- SQLite schema, model/repository/provider danh mục và provider cài đặt đã được tạo; UI CRUD danh mục hiện đã nối provider/repository; CRUD công việc, thông báo và các luồng dữ liệu còn lại chưa hoàn thiện.
+- `pubspec.yaml` đã khai báo `sqflite`, `path`, `provider`, `shared_preferences` và `go_router`; dependency thông báo/biểu đồ chưa được chọn.
 - Phạm vi đề xuất là ứng dụng quản lý công việc (TaskFlow): công việc, danh mục, thống kê và cài đặt. Ảnh Habit Tracker trong tài liệu thiết kế chỉ là tham khảo; streak, điểm thưởng, đăng nhập và bạn bè không nằm trong phạm vi bắt buộc.
 - Mục tiêu cuối: app chạy được, lưu dữ liệu cục bộ, hoàn thành luồng công việc chính, có bản Android để demo và báo cáo. Nếu yêu cầu môn học hoặc thời gian thực tế khác, hai bạn thống nhất điều chỉnh trước khi triển khai.
 
@@ -76,35 +76,108 @@
 4. Vũ dựng app khởi động được với route/màn hình tạm; Thắng xác nhận route và API cần cho luồng công việc.
 5. Cả hai chạy kiểm tra bộ khung và ghi lại cách chạy app, cách tích hợp thay đổi.
 
-### Hợp đồng dữ liệu tối thiểu
+### Hợp đồng schema, route và API
 
-Hai bạn phải chốt tên cột và kiểu dữ liệu trong ngày 1–2. Đề xuất ban đầu:
+Schema được chốt theo [`schema.md`](./schema.md) và đã được tạo trong
+`database_helper.dart`. Đây là nguồn chuẩn duy nhất cho tên cột và kiểu dữ liệu;
+không dùng các tên cũ như `due_date`, `remind_before`, `is_done` hoặc
+`completed_at`. Các trường thời gian của task là `due_at`, `reminder_at`,
+`created_at` và `updated_at`, lưu chuỗi ISO 8601. `reminder_at` là thời điểm
+nhắc cụ thể; số phút nhắc mặc định được lưu trong settings và dùng để tính thời
+điểm này khi tạo/sửa task.
 
-**`categories`**
+Tên/path route đã được khai báo trong `lib/core/router/app_router.dart`:
 
-| Cột | Kiểu | Ghi chú |
+| Route name | Path | Dữ liệu vào |
 |---|---|---|
-| `id` | INTEGER, khóa chính tự tăng | |
-| `name` | TEXT, bắt buộc | Tên danh mục |
-| `color` | INTEGER, có thể null | Giá trị màu |
-| `icon` | TEXT, có thể null | Tên/mã icon |
+| `tasks` | `/tasks` | Không |
+| `task-create` | `/tasks/new` | Không; mở form tạo |
+| `task-detail` | `/tasks/:id` | `id` task dạng số nguyên |
+| `task-edit` | `/tasks/:id/edit` | `id` task dạng số nguyên |
+| `categories` | `/categories` | Không |
+| `statistics` | `/statistics` | Không |
+| `settings` | `/settings` | Không |
 
-**`tasks`**
+`TaskRepository` thống nhất API dữ liệu dưới đây. Repository thực hiện SQLite:
 
-| Cột | Kiểu | Ghi chú |
-|---|---|---|
-| `id` | INTEGER, khóa chính tự tăng | |
-| `title` | TEXT, bắt buộc | Tên công việc |
-| `description` | TEXT, có thể null | |
-| `category_id` | INTEGER, có thể null | Tham chiếu `categories.id` |
-| `priority` | INTEGER | Thấp/trung bình/cao; thống nhất quy ước số |
-| `due_date` | TEXT, có thể null | ISO 8601 |
-| `remind_before` | INTEGER, có thể null | Số phút nhắc trước |
-| `is_done` | INTEGER | 0/1 |
-| `created_at` | TEXT | ISO 8601 |
-| `completed_at` | TEXT, có thể null | ISO 8601 |
+```dart
+Future<List<Task>> getTasks({
+  bool? isCompleted,
+  int? categoryId,
+  DateTime? dueOn,
+});
+Future<Task?> getTaskById(int id);
+Future<int> insertTask(Task task);
+Future<int> updateTask(Task task);
+Future<int> setTaskCompleted(int id, {required bool isCompleted});
+Future<int> deleteTask(int id);
+```
 
-Vũ quản lý schema và version trong `database_helper.dart`; Thắng triển khai model/repository theo hợp đồng đã chốt. Không đổi schema giữa chừng nếu chưa thống nhất migration. Khi xóa danh mục, đặt `category_id = NULL` cho công việc liên quan trong cùng thao tác dữ liệu phù hợp.
+`TaskProvider` cung cấp API cho UI, không nhận `Database` và không chạy SQL:
+
+```dart
+Future<void> loadTasks({
+  bool? isCompleted,
+  int? categoryId,
+  DateTime? dueOn,
+});
+Future<Task> addTask(Task task);
+Future<void> updateTask(Task task);
+Future<void> setTaskCompleted(int id, {required bool isCompleted});
+Future<void> deleteTask(int id);
+```
+
+Provider giữ `tasks`, `isLoading` và `error`; khi thao tác thất bại phải phát
+trạng thái lỗi và ném lại lỗi để form/dialog quyết định cách phản hồi.
+
+`Task` có các thuộc tính khớp `tasks`: `id` (nullable trước khi insert),
+`title`, `description`, `dueAt`, `priority`, `isCompleted`, `categoryId`,
+`reminderAt`, `createdAt` và `updatedAt`; model cung cấp `fromMap`/`toMap`.
+`toMap` dùng đúng tên cột snake_case trong SQLite; `isCompleted` được chuyển
+thành `0/1`, ngày giờ thành ISO 8601. `dueOn` là bộ lọc theo ngày lịch, không
+phải thời điểm hạn chính xác.
+
+#### Hành vi CRUD bắt buộc
+
+- **Tạo:** trim tiêu đề và từ chối tiêu đề rỗng; ID do SQLite sinh. Mặc định
+  `priority = 1`, `is_completed = 0`, `category_id`, `due_at`,
+  `description` và `reminder_at` có thể null. Tạo `created_at`/`updated_at`
+  theo UTC ISO 8601. Category ID không hợp lệ phải trả lỗi khóa ngoại, không
+  được bỏ qua.
+- **Đọc:** danh sách mặc định sắp xếp theo hạn tăng dần, task không có hạn nằm
+  sau task có hạn; đọc một ID không tồn tại trả `null`. Bộ lọc hoàn thành và
+  danh mục là tùy chọn; lọc `dueOn` so theo ngày địa phương của người dùng.
+- **Sửa:** chỉ cho sửa task có ID; trim/validate tiêu đề, giữ nguyên
+  `created_at`, cập nhật `updated_at`. `updateTask` không ghi đè
+  `is_completed`; trạng thái chỉ đổi qua API hoàn thành riêng. ID không tồn tại
+  được nhận biết qua số dòng cập nhật bằng 0.
+- **Hoàn thành/mở lại:** cập nhật `is_completed` và `updated_at`, không xóa
+  task. Khi hoàn thành thì hủy lịch nhắc đang chờ; khi mở lại, lịch được tạo
+  lại nếu có `reminder_at` hợp lệ. Tích hợp notification sẽ thực hiện ở phần
+  nhắc việc.
+- **Xóa:** xóa cứng task theo ID; trả số dòng bị xóa để caller nhận biết ID
+  không tồn tại. Khi nối notification, chỉ hủy lịch sau khi xóa dữ liệu thành
+  công; nếu hủy lịch lỗi thì phải báo lỗi và có cách đồng bộ lại, không được
+  báo thao tác hoàn tất toàn phần.
+- **Lỗi:** repository không nuốt lỗi SQLite/validation; provider giữ lỗi để UI
+  hiển thị và ném lại lỗi cho caller nếu thao tác cần phản hồi. UI không được
+  tự chạy SQL.
+
+#### Các trường hợp cần kiểm thử
+
+1. Tạo task hợp lệ có/không có category, hạn và nhắc; xác nhận dữ liệu đọc lại
+   đúng sau khi mở lại database.
+2. Từ chối tiêu đề chỉ có khoảng trắng; từ chối priority ngoài `1..3` và
+   category ID không tồn tại.
+3. Đọc ID không có, sửa ID không có và xóa ID không có; không hiển thị thành
+   công giả.
+4. Sửa task giữ nguyên `created_at`, cập nhật `updated_at`; kiểm tra nullable
+   `description`, `due_at`, `category_id`, `reminder_at`.
+5. Hoàn thành rồi mở lại task; bảo đảm task vẫn tồn tại và trạng thái chính xác.
+6. Lọc theo trạng thái/category/ngày, gồm task không có hạn và ngày qua nửa
+   đêm/múi giờ.
+7. Xóa category được kiểm tra ở repository danh mục: task vẫn còn và
+   `category_id` thành `NULL` theo `ON DELETE SET NULL`.
 
 ### Nguyên tắc tránh xung đột
 
@@ -121,7 +194,7 @@ Vũ quản lý schema và version trong `database_helper.dart`; Thắng triển 
 
 #### A — Thắng
 
-- **Ngày 1–2:** thống nhất với Vũ schema `tasks`, route và API; xác định trường hợp thêm/sửa/hoàn thành/xóa cần hỗ trợ.
+- **Ngày 1–2 (đã thống nhất):** schema `tasks` theo [`schema.md`](./schema.md), route theo `app_router.dart`, API repository/provider và các hành vi CRUD/edge cases theo hợp đồng ngay trên.
 - **Ngày 3:** hoàn thiện `lib/features/tasks/data/task.dart` và `task_repository.dart`; kiểm tra chuyển đổi dữ liệu và CRUD với SQLite.
 - **Ngày 4:** hoàn thiện `lib/features/tasks/providers/task_provider.dart`; cung cấp thao tác tải, thêm, sửa, xóa và hoàn thành.
 - **Ngày 5:** làm màn danh sách công việc trong `lib/features/tasks/ui/`; hiển thị danh sách, empty state và nút mở form.
@@ -132,12 +205,12 @@ Vũ quản lý schema và version trong `database_helper.dart`; Thắng triển 
 
 #### B — Vũ
 
-- **Ngày 1–2:** thống nhất schema `categories`/`tasks`, dependencies và tên route; cập nhật dependencies trong `pubspec.yaml`; thay counter mẫu bằng entry point gọi app.
+- **Ngày 1–2 (đã dựng nền):** thống nhất schema `categories`/`tasks`, dependencies và tên route; cập nhật `pubspec.yaml`; thay counter bằng entry point TaskFlow.
 - **Ngày 3:** hoàn thiện `lib/core/database/database_helper.dart` để tạo/mở SQLite và hai bảng; hoàn thiện `category.dart` và `category_repository.dart`.
-- **Ngày 4:** hoàn thiện `category_provider.dart`; bắt đầu `settings_provider.dart` để đọc/lưu theme và thời gian nhắc mặc định.
-- **Ngày 5:** hoàn thiện theme cơ bản và `lib/core/router/app_router.dart`; tạo route cho task, danh mục, thống kê và cài đặt; route chưa làm xong dùng màn tạm.
-- **Ngày 6:** làm màn CRUD danh mục trong `lib/features/categories/ui/`; thêm/sửa/xóa và xác nhận trước khi xóa.
-- **Ngày 7:** làm màn cài đặt cơ bản; hoàn thiện `lib/app.dart`; chạy thử app, route và dữ liệu danh mục; bảo đảm xóa danh mục không làm hỏng công việc liên quan.
+- **Ngày 4 (đã triển khai):** hoàn thiện `category_provider.dart`; triển khai `settings_provider.dart` để đọc/lưu theme và thời gian nhắc mặc định bằng `shared_preferences`.
+- **Ngày 5 (đã triển khai):** hoàn thiện theme pastel sáng/tối và `lib/core/router/app_router.dart`; tạo route cho task, danh mục, thống kê và cài đặt; các màn task chưa làm xong dùng placeholder.
+- **Ngày 6 (đã triển khai):** làm màn CRUD danh mục trong `lib/features/categories/ui/categories_page.dart`; đọc dữ liệu qua provider/repository, hỗ trợ thêm/sửa tên và màu pastel, xác nhận trước khi xóa; có loading, empty, error/retry và phản hồi thao tác.
+- **Ngày 7:** hoàn thiện màn cài đặt và tích hợp dữ liệu danh mục; chạy thử app/route; bảo đảm xóa danh mục không làm hỏng công việc liên quan.
 
 **Bàn giao cuối tuần 1:** app khởi động được; SQLite tạo đúng hai bảng; danh mục CRUD được; cài đặt theme/thời gian nhắc được lưu; các route chính mở được.
 

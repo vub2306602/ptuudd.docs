@@ -1,7 +1,8 @@
 # Schema cơ sở dữ liệu TaskFlow
 
-> **Trạng thái:** Đề xuất cho MVP, cần các thành viên xác nhận trước khi triển
-> khai. Đây là hợp đồng dữ liệu dự kiến, chưa phản ánh schema đang chạy trong app.
+> **Trạng thái:** DDL đã được triển khai trong `lib/core/database/database_helper.dart`
+> (version 1). Database chỉ được tạo khi helper được mở; phần còn lại của ứng dụng
+> chưa tích hợp helper.
 >
 > **CSDL mục tiêu:** SQLite.
 
