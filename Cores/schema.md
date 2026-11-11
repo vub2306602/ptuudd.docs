@@ -1,8 +1,8 @@
 # Schema cơ sở dữ liệu TaskFlow
 
 > **Trạng thái:** DDL đã được triển khai trong `lib/core/database/database_helper.dart`
-> (version 1). Database chỉ được tạo khi helper được mở; phần còn lại của ứng dụng
-> chưa tích hợp helper.
+> (version 1). Category và Task model/repository/provider dùng schema này; database
+> được mở khi một repository truy cập dữ liệu.
 >
 > **CSDL mục tiêu:** SQLite.
 
