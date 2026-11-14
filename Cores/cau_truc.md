@@ -14,12 +14,12 @@ Mã nguồn và kế hoạch cần được phân biệt rõ:
   theo [`schema.md`](./schema.md); model/repository/provider danh mục và provider
   cài đặt đã được triển khai, đăng ký trong app.
 - `pubspec.yaml` hiện khai báo `sqflite`, `path`, `provider`,
-  `shared_preferences` và `go_router`. Các package biểu đồ và thông báo chưa
-  được chọn/cài đặt.
+  `shared_preferences`, `go_router`, `flutter_local_notifications`,
+  `flutter_timezone` và `timezone`. Package biểu đồ chưa được chọn/cài đặt.
 - Router đã có các route chính; dashboard/danh sách, form và chi tiết task hiện
   được nối với TaskProvider/TaskRepository/SQLite. Màn danh mục hỗ trợ CRUD;
   cài đặt lưu theme/thời gian nhắc mặc định. Thống kê vẫn là giao diện số liệu
-  mẫu; local notification chưa được triển khai.
+  mẫu; local notification đã nối vào vòng đời Task, đang chờ kiểm thử trên thiết bị.
 - Database được mở khi repository danh mục được gọi; CRUD danh mục đã nối vào
   giao diện. Màn có loading, empty, error/retry và xác nhận trước khi xóa.
 - Các test hiện có bao phủ cài đặt, danh mục và quy tắc khóa ngoại. Sau khi
@@ -46,9 +46,12 @@ Các package nền tảng đã chốt/được thêm cho MVP:
 | `provider` | Đã thêm; cung cấp ChangeNotifier cho UI |
 | `go_router` | Đã thêm; điều hướng giữa các route chính |
 | `shared_preferences` | Đã thêm; lưu theme và thời gian nhắc mặc định |
+| `flutter_local_notifications` | Đã thêm; lập lịch/hủy nhắc việc cục bộ trên thiết bị |
+| `flutter_timezone` | Đã thêm; đọc timezone hiện tại của thiết bị |
+| `timezone` | Đã thêm; chuyển thời điểm nhắc sang lịch địa phương để lên lịch |
 
-Dependency thông báo và biểu đồ có thể được chọn khi bắt đầu triển khai các
-chức năng đó.
+Dependency local notification/timezone đã được chọn cho nhắc việc. Dependency
+biểu đồ để lại đến khi triển khai thống kê.
 
 #### Routes
 
@@ -144,7 +147,7 @@ lib/
         │   ├── task.dart
         │   └── task_repository.dart
         ├── notifications/
-        │   └── notification_service.dart  # chưa triển khai
+        │   └── notification_service.dart  # local notification theo reminder_at
         ├── providers/
         │   └── task_provider.dart
         └── ui/
@@ -191,11 +194,11 @@ lib/
 |---|---|
 | `lib/features/tasks/data/task.dart` | Model `Task` khớp schema SQLite, ánh xạ `fromMap`/`toMap`, xử lý ngày ISO 8601 và trường nullable. **Hiện tại:** đã triển khai. |
 | `lib/features/tasks/data/task_repository.dart` | Đọc danh sách/chi tiết, thêm, sửa, xóa, đánh dấu hoàn thành và lọc qua SQLite; không đặt SQL trong widget. **Hiện tại:** đã triển khai. |
-| `lib/features/tasks/providers/task_provider.dart` | Điều phối tải/CRUD/hoàn thành, bộ lọc và trạng thái loading/error. **Hiện tại:** đã triển khai và đăng ký trong app. |
-| `lib/features/tasks/ui/tasks_page.dart` | Danh sách công việc theo nhóm hạn, lọc trạng thái cơ bản, trạng thái rỗng/lỗi và `TaskTile`. **Hiện tại:** đã nối provider; tìm kiếm và lọc danh mục đầy đủ để ở tuần 2 theo phân công. |
+| `lib/features/tasks/providers/task_provider.dart` | Điều phối tải/CRUD/hoàn thành, lọc, số lời nhắc và đồng bộ notification theo vòng đời task. **Hiện tại:** đã triển khai và đăng ký trong app. |
+| `lib/features/tasks/ui/tasks_page.dart` | Danh sách theo nhóm hạn, tìm theo tên, lọc trạng thái/danh mục/ngày, xóa vuốt có xác nhận, empty/error state và bố cục rộng dạng danh sách + chi tiết. **Hiện tại:** đã nối provider. |
 | `lib/features/tasks/ui/task_form_page.dart` | Form tạo/sửa, validation tiêu đề, ghi chú, ngày/giờ, ưu tiên, danh mục và thời điểm nhắc theo cài đặt. **Hiện tại:** đã nối provider. |
 | `lib/features/tasks/ui/task_detail_page.dart` | Chi tiết theo ID, hoàn thành/bỏ hoàn thành, sửa, xóa có xác nhận và ID không tồn tại. **Hiện tại:** đã nối provider. |
-| `lib/features/tasks/notifications/notification_service.dart` | Khởi tạo, quyền, timezone và lên/hủy/cập nhật local notification theo vòng đời task. **Hiện tại:** chưa triển khai; nằm trong kế hoạch tuần 2. |
+| `lib/features/tasks/notifications/notification_service.dart` | Khởi tạo, xin quyền khi cần, lấy timezone thiết bị và lên/hủy local notification theo ID task ổn định. **Hiện tại:** đã nối tạo/sửa/xóa/hoàn thành/mở lại và đồng bộ reminder đã lưu lúc mở app; chưa thử notification trên thiết bị thật. |
 
 ### Danh mục — `lib/features/categories/`
 
@@ -225,7 +228,7 @@ và được kiểm thử qua route.
 
 > `app_pages.dart` giữ shell, thống kê và cài đặt; giao diện task và danh mục
 > nằm trong các feature tương ứng. Task và category đã có luồng CRUD SQLite;
-> thống kê vẫn dùng dữ liệu mẫu và notification service chưa được triển khai.
+> thống kê vẫn dùng dữ liệu mẫu; local notification đã tích hợp nhưng chưa kiểm thử trên thiết bị.
 
 ## 5. Tài liệu trong `Docs/ptuudd.docs/Cores`
 
