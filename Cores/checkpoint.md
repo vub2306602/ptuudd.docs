@@ -153,6 +153,39 @@ repository · Notification được chuyển sang tuần 2 theo kế hoạch.
 
 **Biên bản tuần 2:** Ngày ____ · Commit tích hợp ____ · Lỗi P0/P1 ____ · Kế hoạch xử lý ____
 
+### Báo cáo công việc Tuần 2 — SV-A (Thắng) — đối chiếu repository 14/11/2026
+
+> Phạm vi đối chiếu: các đầu việc SV-A trong `phan-cong-3-tuan.md`, trình tự
+> Tuần 2 trong `next_step_guide.md`, yêu cầu notification trong `tieuchi.md` và
+> hợp đồng `reminder_at` trong `schema.md`. Trạng thái dưới đây dựa trên code và
+> kết quả analyzer/build hiện có; chưa xem là nghiệm thu trên thiết bị.
+
+| Đầu việc Tuần 2 của SV-A | Trạng thái | Bằng chứng / giới hạn |
+|---|---|---|
+| Tìm kiếm theo tên | Đã triển khai | `TasksPage` lọc tiêu đề từ dữ liệu hiện có. |
+| Lọc trạng thái, danh mục, ngày đến hạn và xóa bộ lọc | Đã triển khai | Bộ lọc gọi `TaskProvider`/`TaskRepository`; thao tác xóa bộ lọc trở về danh sách đầy đủ. Chưa chạy kiểm thử tương tác. |
+| Local notification, quyền và timezone | Đã triển khai trong code | `NotificationService` khởi tạo plugin/timezone, xin quyền khi có lời nhắc cần đặt và lên lịch notification theo `reminder_at`. Android dùng lịch inexact để không yêu cầu quyền exact alarm; Android manifest khai báo receiver khôi phục lịch sau khởi động. |
+| Đồng bộ vòng đời thông báo | Đã nối trong provider | Tạo/sửa đặt hoặc cập nhật notification; xóa/hủy; hoàn thành/hủy; mở lại task đặt lại. ID notification dùng ID SQLite của task. Lời nhắc cũ được đồng bộ khi provider tải dữ liệu lần đầu. |
+| Xóa vuốt có xác nhận | Đã triển khai | Vuốt task mở xác nhận; lỗi xóa được báo qua SnackBar. Trang chi tiết vẫn có xác nhận xóa. |
+| Bố cục màn rộng | Đã triển khai trong code | Màn danh sách chuyển sang danh sách + chi tiết khi đủ rộng; form/chi tiết giới hạn bề rộng để dễ đọc. Chưa kiểm tra trực quan trên kích thước thiết bị. |
+| Form không hạn/không danh mục/bỏ nhắc | Đã giữ hỗ trợ | Các trường vẫn tùy chọn; bỏ hạn sẽ tắt lời nhắc, bỏ danh mục lưu `NULL`. Chưa chạy đủ trường hợp runtime trong lượt này. |
+
+**Kiểm tra đã chạy:** `flutter pub get` thành công; `flutter analyze --no-pub`
+đạt **No issues found**; `flutter build apk --debug` thành công tại
+`build/app/outputs/flutter-apk/app-debug.apk`.
+
+**Chưa kiểm chứng:** chưa chạy test suite, chưa cài/chạy trên emulator hoặc thiết
+bị thật, chưa xác nhận permission prompt và notification khi app foreground,
+background, sau reboot hay khi người dùng từ chối quyền. Vì Android dùng lịch
+inexact, thời điểm hiển thị có thể trễ; giới hạn riêng của thiết bị/OS cần được
+ghi sau khi thử ở Tuần 3. Các mục nghiệm thu Tuần 2 ở trên vẫn để unchecked cho
+đến khi có xác nhận chạy thực tế. Thống kê thuộc SV-B và không nằm trong báo cáo
+hoàn thành SV-A này.
+
+**Việc tiếp theo của SV-A ở Tuần 3:** thử notification trên thiết bị thật, kiểm
+tra CRUD với task rỗng/không hạn và trường hợp quyền bị từ chối; ghi lại giới hạn
+OS, chuẩn bị dữ liệu demo và báo cáo phần Công việc/Thông báo.
+
 ## Checkpoint 4 — Ngày 17: bản cài thử
 
 - [ ] Đã sửa lỗi chặn và kiểm tra lại tính năng bị ảnh hưởng.
