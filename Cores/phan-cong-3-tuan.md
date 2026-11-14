@@ -15,24 +15,24 @@
 
 ### A — Thắng: Công việc và nhắc việc
 
-| Phạm vi | File/thư mục dự kiến | Đầu ra |
-|---|---|---|
-| Model và truy cập dữ liệu công việc | `lib/features/tasks/data/task.dart`, `task_repository.dart` | Model khớp hợp đồng dữ liệu; CRUD và truy vấn công việc |
-| Trạng thái công việc | `lib/features/tasks/providers/task_provider.dart` | Tải, thêm, sửa, xóa, hoàn thành, tìm kiếm/lọc; có trạng thái loading/lỗi phù hợp |
-| Giao diện công việc | `lib/features/tasks/ui/` (tạo các thư mục/file cần thiết) | Danh sách, form thêm/sửa, chi tiết, trạng thái rỗng và xác nhận xóa |
-| Nhắc việc | `lib/features/tasks/notifications/notification_service.dart` | Đặt, cập nhật và hủy thông báo theo vòng đời công việc; xử lý quyền trên thiết bị mục tiêu |
-| Tích hợp | Route và widget thuộc tính năng công việc | Kết nối màn hình với provider/repository; kiểm tra luồng tạo đến hoàn thành công việc |
+| Phạm vi                             | File/thư mục dự kiến                                         | Đầu ra                                                                                     |
+| ----------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Model và truy cập dữ liệu công việc | `lib/features/tasks/data/task.dart`, `task_repository.dart`  | Model khớp hợp đồng dữ liệu; CRUD và truy vấn công việc                                    |
+| Trạng thái công việc                | `lib/features/tasks/providers/task_provider.dart`            | Tải, thêm, sửa, xóa, hoàn thành, tìm kiếm/lọc; có trạng thái loading/lỗi phù hợp           |
+| Giao diện công việc                 | `lib/features/tasks/ui/` (tạo các thư mục/file cần thiết)    | Danh sách, form thêm/sửa, chi tiết, trạng thái rỗng và xác nhận xóa                        |
+| Nhắc việc                           | `lib/features/tasks/notifications/notification_service.dart` | Đặt, cập nhật và hủy thông báo theo vòng đời công việc; xử lý quyền trên thiết bị mục tiêu |
+| Tích hợp                            | Route và widget thuộc tính năng công việc                    | Kết nối màn hình với provider/repository; kiểm tra luồng tạo đến hoàn thành công việc      |
 
 ### B — Vũ: Danh mục, thống kê, cài đặt và khung ứng dụng
 
-| Phạm vi | File/thư mục dự kiến | Đầu ra |
-|---|---|---|
-| Model và truy cập dữ liệu danh mục | `lib/features/categories/data/category.dart`, `category_repository.dart` | CRUD danh mục; xử lý công việc tham chiếu danh mục bị xóa |
-| Trạng thái danh mục | `lib/features/categories/providers/category_provider.dart` | Tải, thêm, sửa, xóa và cung cấp danh mục cho giao diện |
-| Cài đặt | `lib/features/settings/providers/settings_provider.dart`, `lib/features/settings/ui/` | Lưu/đọc tùy chọn sáng/tối và thời gian nhắc mặc định |
-| Thống kê | `lib/features/statistics/data/stats_repository.dart`, `providers/stats_provider.dart`, `ui/` | Số liệu tổng quan từ dữ liệu công việc; biểu đồ chỉ triển khai sau khi luồng cốt lõi ổn định |
-| Khung ứng dụng | `lib/app.dart`, `lib/core/router/app_router.dart`, `lib/core/database/database_helper.dart` | Composition root, điều hướng, khởi tạo và nâng version cơ sở dữ liệu |
-| Giao diện dùng chung | Theme, điều hướng/shell và cài đặt app | Theme sáng/tối nhất quán, navigation giữa các khu vực |
+| Phạm vi                            | File/thư mục dự kiến                                                                         | Đầu ra                                                                                       |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Model và truy cập dữ liệu danh mục | `lib/features/categories/data/category.dart`, `category_repository.dart`                     | CRUD danh mục; xử lý công việc tham chiếu danh mục bị xóa                                    |
+| Trạng thái danh mục                | `lib/features/categories/providers/category_provider.dart`                                   | Tải, thêm, sửa, xóa và cung cấp danh mục cho giao diện                                       |
+| Cài đặt                            | `lib/features/settings/providers/settings_provider.dart`, `lib/features/settings/ui/`        | Lưu/đọc tùy chọn sáng/tối và thời gian nhắc mặc định                                         |
+| Thống kê                           | `lib/features/statistics/data/stats_repository.dart`, `providers/stats_provider.dart`, `ui/` | Số liệu tổng quan từ dữ liệu công việc; biểu đồ chỉ triển khai sau khi luồng cốt lõi ổn định |
+| Khung ứng dụng                     | `lib/app.dart`, `lib/core/router/app_router.dart`, `lib/core/database/database_helper.dart`  | Composition root, điều hướng, khởi tạo và nâng version cơ sở dữ liệu                         |
+| Giao diện dùng chung               | Theme, điều hướng/shell và cài đặt app                                                       | Theme sáng/tối nhất quán, navigation giữa các khu vực                                        |
 
 > `lib/main.dart` chỉ giữ vai trò entry point và gọi app. Thay thế counter mẫu trong ngày 1–2; B chịu trách nhiệm tích hợp khung, A cung cấp màn hình công việc đầu tiên. Thay đổi file dùng chung cần được trao đổi và review bởi cả hai.
 
@@ -88,15 +88,15 @@ nhắc cụ thể; số phút nhắc mặc định được lưu trong settings 
 
 Tên/path route đã được khai báo trong `lib/core/router/app_router.dart`:
 
-| Route name | Path | Dữ liệu vào |
-|---|---|---|
-| `tasks` | `/tasks` | Không |
-| `task-create` | `/tasks/new` | Không; mở form tạo |
-| `task-detail` | `/tasks/:id` | `id` task dạng số nguyên |
-| `task-edit` | `/tasks/:id/edit` | `id` task dạng số nguyên |
-| `categories` | `/categories` | Không |
-| `statistics` | `/statistics` | Không |
-| `settings` | `/settings` | Không |
+| Route name    | Path              | Dữ liệu vào              |
+| ------------- | ----------------- | ------------------------ |
+| `tasks`       | `/tasks`          | Không                    |
+| `task-create` | `/tasks/new`      | Không; mở form tạo       |
+| `task-detail` | `/tasks/:id`      | `id` task dạng số nguyên |
+| `task-edit`   | `/tasks/:id/edit` | `id` task dạng số nguyên |
+| `categories`  | `/categories`     | Không                    |
+| `statistics`  | `/statistics`     | Không                    |
+| `settings`    | `/settings`       | Không                    |
 
 `TaskRepository` thống nhất API dữ liệu dưới đây. Repository thực hiện SQLite:
 
@@ -218,25 +218,29 @@ phải thời điểm hạn chính xác.
 
 #### A — Thắng
 
-- **Ngày 8:** bổ sung tìm kiếm theo tên và lọc công việc theo trạng thái/danh mục/ngày; có thao tác xóa bộ lọc.
-- **Ngày 9:** triển khai khởi tạo `notification_service.dart`, xử lý quyền thông báo/timezone theo package và nền tảng đã chốt.
-- **Ngày 10:** nối thông báo với tạo/sửa/xóa/hoàn thành công việc; cập nhật hoặc hủy lịch nhắc để không còn thông báo cũ.
-- **Ngày 11:** hoàn thiện xác nhận xóa và hiển thị lỗi/loading/rỗng ở các màn công việc.
-- **Ngày 12:** kiểm tra bố cục trên kích thước màn hình mục tiêu; chỉnh giao diện danh sách, form và chi tiết.
-- **Ngày 13:** kiểm tra form lấy danh mục từ nguồn dữ liệu chung; thử các trường hợp thiếu hạn, không có danh mục và bỏ nhắc.
-- **Ngày 14:** cùng Vũ tích hợp toàn app; sửa lỗi luồng công việc và ghi lại giới hạn thông báo nếu thiết bị chưa hỗ trợ kiểm thử.
+- **Ngày 8 (đã triển khai):** bổ sung tìm kiếm theo tên và lọc công việc theo trạng thái/danh mục/ngày; có thao tác xóa bộ lọc.
+- **Ngày 9 (đã triển khai):** triển khai khởi tạo `notification_service.dart`, xử lý quyền thông báo/timezone theo package và nền tảng đã chốt.
+- **Ngày 10 (đã triển khai):** nối thông báo với tạo/sửa/xóa/hoàn thành công việc; cập nhật hoặc hủy lịch nhắc để không còn thông báo cũ.
+- **Ngày 11 (đã triển khai):** hoàn thiện xác nhận xóa và hiển thị lỗi/loading/rỗng ở các màn công việc.
+- **Ngày 12 (đã triển khai):** kiểm tra bố cục trên kích thước màn hình mục tiêu; chỉnh giao diện danh sách, form và chi tiết.
+- **Ngày 13 (đã triển khai):** kiểm tra form lấy danh mục từ nguồn dữ liệu chung; thử các trường hợp thiếu hạn, không có danh mục và bỏ nhắc.
+- **Ngày 14 (đã triển khai):** cùng Vũ tích hợp toàn app; sửa lỗi luồng công việc và ghi lại giới hạn thông báo nếu thiết bị chưa hỗ trợ kiểm thử.
 
 **Bàn giao cuối tuần 2:** luồng công việc hoàn chỉnh có tìm kiếm/lọc; nhắc việc được đặt/cập nhật/hủy đúng theo thao tác; không còn lỗi chặn luồng tạo đến hoàn thành.
 
 #### B — Vũ
 
-- **Ngày 8:** chốt các chỉ số thống kê và truy vấn trong `lib/features/statistics/data/stats_repository.dart`, đọc dữ liệu từ SQLite.
-- **Ngày 9:** hoàn thiện `stats_provider.dart` và màn thống kê tổng quan: tổng số, đã hoàn thành, chưa hoàn thành.
-- **Ngày 10:** thêm biểu đồ tuần nếu dependencies và dữ liệu đã sẵn sàng; nếu chưa, ưu tiên hiển thị số liệu chính xác.
-- **Ngày 11:** hoàn thiện loading/error/empty state cho danh mục, thống kê và cài đặt; sửa lỗi theme hoặc điều hướng.
-- **Ngày 12:** kiểm tra responsive cho lưới danh mục và màn thống kê.
-- **Ngày 13:** thử xóa danh mục đang được công việc sử dụng; xác nhận `category_id` được xử lý đúng; kiểm tra cài đặt sau khi khởi động lại app.
-- **Ngày 14:** cùng Thắng chạy thử app từ đầu đến cuối, tích hợp các nhánh/phần việc và lập danh sách lỗi theo mức độ.
+- **Ngày 8 (đã triển khai):** chốt các chỉ số tổng số/đã hoàn thành/chưa hoàn thành/tỷ lệ hoàn thành và số task đến hạn mỗi ngày trong tuần; `StatsRepository` tổng hợp trực tiếp từ SQLite. Thống kê tuần là trạng thái hiện tại của task theo ngày đến hạn vì schema chưa lưu thời điểm hoàn thành.
+- **Ngày 9 (đã triển khai):** hoàn thiện `StatsProvider`, đăng ký trong app và nối màn tổng quan với tổng số, đã hoàn thành, chưa hoàn thành từ SQLite; có loading/error/retry và trạng thái rỗng.
+- **Ngày 10 (đã triển khai):** thêm biểu đồ cột xếp chồng bảy ngày bằng widget Flutter thuần, không thêm dependency; đọc số task đến hạn và trạng thái hiện tại từ SQLite, có chú thích giới hạn do schema chưa lưu thời điểm hoàn thành.
+- **Ngày 11 (đã triển khai):** tách trạng thái tải đầu/lỗi/rỗng của danh mục, hiển thị lỗi task liên quan; hoàn thiện lỗi/thử tải lại cài đặt, giữ các trạng thái thống kê; kiểm tra theme và các route tab bằng widget test.
+- **Ngày 12 (đã kiểm tra bằng widget test):** kiểm tra responsive lưới danh mục
+  và màn thống kê ở kích thước hẹp, ngưỡng chuyển cột và màn rộng; điều chỉnh
+  lưới danh mục để giữ bề rộng thẻ tối thiểu khoảng 220 px, tối đa bốn cột.
+- **Ngày 13 (đã kiểm tra trên Android emulator):** xóa danh mục có task tham
+  chiếu; xác nhận task còn nguyên và `category_id` thành `NULL`; đổi theme/thời
+  gian nhắc, cold-start lại app và xác nhận cài đặt được giữ.
+- **Ngày 14 (đã kiểm thử một phần):** nhánh Thắng đã được tích hợp vào HEAD qua merge commit PR#4; trên Android emulator đã tạo, hoàn thành, xác nhận task chuyển sang bộ lọc hoàn thành và số liệu thống kê đổi đúng, sau đó xóa task kiểm thử. Analyzer và debug APK đạt; test suite còn 4 lỗi trong `test/widget_test.dart`. Chưa xác nhận đầy đủ luồng sửa task/notification trên thiết bị; xem [bug.md](./bug.md) và báo cáo Ngày 14 trong [checkpoint.md](./checkpoint.md).
 
 **Bàn giao cuối tuần 2:** thống kê lấy số liệu thật từ SQLite; danh mục/cài đặt/điều hướng ổn định; các màn có trạng thái dữ liệu rỗng và lỗi phù hợp.
 

@@ -142,16 +142,177 @@ repository · Notification được chuyển sang tuần 2 theo kế hoạch.
 
 - [ ] Tìm kiếm/lọc công việc và trạng thái rỗng/lỗi hoạt động.
 - [ ] Nhắc việc được tạo/cập nhật/hủy theo thao tác thêm/sửa/xóa/hoàn thành.
-- [ ] Thống kê đọc SQLite và hiển thị số liệu/biểu đồ hợp lý với dữ liệu mẫu.
-- [ ] Form công việc đọc danh mục từ bảng `categories`; xóa danh mục đặt `category_id` liên quan về `NULL`.
-- [ ] Dark mode và cài đặt còn sau khi khởi động lại.
-- [ ] Responsive cơ bản được kiểm tra ở kích thước hẹp và rộng.
-- [ ] Hai phần đã tích hợp; luồng chính chạy trên emulator.
-- [ ] Có bug list với mức độ, người xử lý và hạn sửa.
+- [x] Thống kê đọc SQLite và hiển thị số liệu/biểu đồ hợp lý với dữ liệu mẫu.
+- [x] Form công việc đọc danh mục từ bảng `categories`; xóa danh mục đặt `category_id` liên quan về `NULL`.
+- [x] Dark mode và cài đặt còn sau khi khởi động lại.
+- [x] Responsive cơ bản được kiểm tra ở kích thước hẹp và rộng bằng widget test.
+- [x] Hai phần đã tích hợp; luồng tạo → hoàn thành → thống kê → xóa task kiểm thử chạy trên emulator.
+- [x] Có bug list với mức độ, người xử lý và hạn sửa.
 
 **Gate:** Không vào tuần 3 khi còn lỗi chặn tạo/sửa/hoàn thành công việc hoặc mất dữ liệu.
 
 **Biên bản tuần 2:** Ngày ____ · Commit tích hợp ____ · Lỗi P0/P1 ____ · Kế hoạch xử lý ____
+
+### Báo cáo Ngày 8 — SV-B (Vũ) — đối chiếu repository 14/11/2026
+
+> Đây là trạng thái tại thời điểm bàn giao Ngày 8; phần provider và màn tổng
+> quan đã được tiếp tục trong báo cáo Ngày 9 bên dưới.
+
+- Đã triển khai `StatsRepository` đọc trực tiếp bảng `tasks`: tổng số task,
+  số đã hoàn thành, số chưa hoàn thành, tỷ lệ hoàn thành và số task đến hạn/
+  đang hoàn thành theo từng ngày từ thứ Hai đến Chủ nhật.
+- Tuần không có dữ liệu vẫn trả đủ bảy ngày với số đếm bằng 0; task không có
+  hạn không được tính vào thống kê tuần. Schema hiện không có `completed_at`,
+  nên biểu đồ tuần phản ánh trạng thái hiện tại theo ngày đến hạn, không phải
+  ngày task thực sự được hoàn thành.
+- Đã thêm `test/stats_repository_test.dart`; cả bốn test SQLite FFI về dữ liệu
+  rỗng, tổng quan, ranh giới tuần và tuần không có task đều đạt. `flutter
+  analyze --no-pub` trên repository và test đạt **No issues found**.
+- Chạy toàn bộ `flutter test`: 13 test đạt, gồm cả bốn test thống kê; bốn test
+  widget hiện có thất bại do còn kỳ vọng nội dung/route placeholder cũ và gặp
+  lỗi layout/`pumpAndSettle` trên giao diện hiện tại. Đây là test UI ngoài phạm
+  vi Ngày 8; cần cập nhật ở đầu việc tích hợp/kiểm thử riêng.
+- Ở thời điểm này, đây mới là phần repository; `StatsProvider` và màn thống kê
+  chưa nối repository.
+
+### Báo cáo Ngày 9 — SV-B (Vũ) — đối chiếu repository 14/11/2026
+
+- Đã triển khai `StatsProvider`, đăng ký trong `TaskFlowApp` và nối trang Thống
+  kê với tổng số, đã hoàn thành và chưa hoàn thành từ SQLite.
+- Trang tự tải khi mở, hỗ trợ kéo để tải lại, hiển thị loading/error cùng nút
+  thử lại, và thông báo riêng khi chưa có công việc. Thẻ số liệu tự bố trí 2/3
+  cột theo chiều rộng màn hình.
+- Các test repository/provider/giao diện thống kê đạt **9/9**; `flutter analyze
+  --no-pub` toàn dự án đạt **No issues found**.
+- Toàn bộ `flutter test`: **18 test đạt, 4 widget test cũ thất bại** do kỳ vọng
+  dashboard/route placeholder cũ, `pumpAndSettle` timeout và lỗi overflow ở
+  trang công việc. Các test thống kê mới đều đạt; cần xử lý test UI cũ riêng.
+- Chưa có kiểm tra trên emulator/thiết bị; biểu đồ tuần chưa triển khai. Vì vậy
+  tiêu chí nghiệm thu tổng thể Checkpoint 3 vẫn để unchecked.
+
+**Việc tiếp theo của SV-B:** Ngày 10 đánh giá biểu đồ tuần và dependencies; ưu
+tiên số liệu chính xác, không diễn giải trạng thái hiện tại thành ngày hoàn thành.
+
+### Báo cáo Ngày 10 — SV-B (Vũ) — đối chiếu repository 14/11/2026
+
+- Đã tải dữ liệu tuần từ `StatsRepository` qua `StatsProvider` cùng lượt với
+  tổng quan; provider chỉ công bố bộ số liệu sau khi cả hai truy vấn thành công.
+- Đã thêm biểu đồ cột xếp chồng bảy ngày trong
+  `lib/features/statistics/ui/weekly_task_chart.dart`, phân biệt task đã/chưa
+  hoàn thành và hiển thị ngày trong tuần. Biểu đồ ghi rõ số liệu nhóm theo ngày
+  đến hạn và trạng thái hiện tại, không ngụ ý ngày hoàn thành thực tế.
+- Biểu đồ dùng widget Flutter, không thêm dependency. Khi không có task đến hạn,
+  biểu đồ hiển thị thông báo rỗng và đủ các mốc ngày.
+- Chạy test repository/provider/giao diện thống kê: **10/10 đạt**;
+  `flutter analyze --no-pub` toàn dự án đạt **No issues found**. Toàn bộ test
+  suite có **19 test đạt, 4 widget test cũ thất bại** do kỳ vọng dashboard/route
+  placeholder cũ, `pumpAndSettle` timeout và lỗi overflow ở trang công việc;
+  không có test thống kê thất bại.
+- Chưa xác nhận trực quan trên emulator/thiết bị; tiêu chí nghiệm thu tổng thể
+  Checkpoint 3 vẫn để unchecked.
+
+**Việc tiếp theo của SV-B:** Ngày 11 rà soát loading/error/empty của các màn,
+kiểm tra theme/điều hướng; tiếp tục cập nhật test UI cũ ở phạm vi tích hợp.
+
+### Báo cáo Ngày 11 — SV-B (Vũ) — đối chiếu repository 14/11/2026
+
+- Màn Danh mục chờ lần tải đầu trước khi kết luận danh sách rỗng; nếu truy vấn
+  danh mục lỗi khi chưa có dữ liệu, màn hiển thị lỗi/thử lại thay vì báo rỗng.
+  Lỗi tải dữ liệu công việc dùng để đếm task theo danh mục cũng được hiển thị.
+- Thống kê giữ loading/error/retry/empty; Cài đặt hiển thị lỗi lưu/tải và có
+  thao tác tải lại. Nếu đọc preferences lỗi lúc khởi động, app ghi lỗi qua
+  `FlutterError.reportError` nhưng vẫn mở bằng giá trị mặc định để người dùng
+  truy cập được SettingsPage. Cài đặt là form các lựa chọn cố định nên không có
+  trạng thái danh sách rỗng.
+- Kiểm tra tích hợp theme sáng/tối và điều hướng các tab Danh mục/Thống kê/Cài
+  đặt bằng test; không phát hiện lỗi route/theme cần sửa.
+- Bộ test liên quan category/settings/statistics/navigation đạt **22/22**;
+  `flutter analyze --no-pub` toàn dự án đạt **No issues found**. Toàn bộ
+  `flutter test` có **25 test đạt, 4 widget test cũ thất bại** do kỳ vọng
+  dashboard/route placeholder cũ, timeout và overflow ở trang công việc; không
+  có test mới thuộc phạm vi Ngày 11 thất bại.
+- Chưa xác nhận trực quan trên thiết bị; Checkpoint 3 vẫn chưa nghiệm thu.
+
+**Việc tiếp theo của SV-B:** Ngày 12 kiểm tra responsive lưới danh mục và màn
+thống kê trên các kích thước mục tiêu; giữ nguyên giới hạn diễn giải biểu đồ tuần.
+
+### Báo cáo Ngày 12 — SV-B (Vũ) — đối chiếu repository 14/11/2026
+
+- Kiểm tra widget lưới danh mục tại 320, 390, 600, 720, 724, 1024 và 1080 px.
+  Phát hiện hai cột trên màn 320 px khiến nội dung thẻ quá hẹp; đã điều chỉnh
+  grid theo bề rộng thẻ mục tiêu khoảng 220 px, tối đa bốn cột, và giới hạn
+  chiều cao thẻ một cột.
+- Kiểm tra thẻ tổng quan và biểu đồ ở 320, 375, 475, 476, 600 và 1024 px.
+  Thẻ số liệu giữ 2 cột khi vùng nội dung dưới 440 px và chuyển sang 3 cột khi
+  đủ rộng; kiểm tra hàng thẻ và xác nhận không có layout exception.
+- Hai file widget test liên quan đạt **9/9**; `flutter analyze --no-pub` đạt
+  **No issues found**. Toàn bộ `flutter test` có **27 test đạt, 4 test cũ
+  thất bại** trong `test/widget_test.dart` do kỳ vọng UI/route placeholder cũ,
+  timeout `pumpAndSettle` và overflow ở trang công việc; các test responsive
+  mới đều đạt.
+- Chưa có emulator/thiết bị để xác minh trực quan; kết quả hôm nay giới hạn ở
+  widget test. Checkpoint 3 vẫn chưa nghiệm thu do còn test/UI và kiểm tra thiết
+  bị cần xử lý riêng.
+
+**Việc tiếp theo của SV-B:** Ngày 13 kiểm tra xóa danh mục đang được công việc
+sử dụng, persistence cài đặt và giữ nguyên cách diễn giải thống kê tuần.
+
+### Báo cáo Ngày 13 — SV-B (Vũ) — đối chiếu repository 14/11/2026
+
+- Trên Android emulator (API 37), tạo danh mục, gán vào một task có sẵn rồi
+  xóa danh mục qua UI. Màn danh mục xác nhận có **1 công việc** trước khi xóa;
+  sau xóa task vẫn còn và màn chi tiết hiện **Không có danh mục**.
+- Đọc SQLite trực tiếp trước/sau cold-start: sau xóa có **1 task**, **0
+  category**, `category_id IS NULL`. Test repository cũng xác nhận task còn
+  trong DB và `TaskRepository` chuyển thành `Task.categoryId == null`.
+- Đổi cài đặt sang theme tối và nhắc trước **30 phút**, force-stop rồi mở lại
+  app. Theme tối và 30 phút vẫn hiển thị trong SettingsPage; SharedPreferences
+  trên emulator giữ đúng hai giá trị. Đã khôi phục theme sáng và nhắc trước
+  **15 phút** sau khi kiểm tra.
+- `category_repository_test.dart`: **3/3 đạt**; `settings_provider_test.dart`:
+  **3/3 đạt**, gồm tải lại bằng provider mới. `flutter analyze --no-pub` đạt
+  **No issues found**. Toàn bộ `flutter test`: **27 đạt, 4 test cũ thất bại**
+  trong `test/widget_test.dart` do kỳ vọng UI/route placeholder cũ,
+  `pumpAndSettle` timeout và overflow tại trang công việc; không có lỗi mới
+  thuộc phạm vi Ngày 13.
+- Kiểm tra cold-start thực hiện trên emulator; không thay đổi schema hoặc
+  production code vì khóa ngoại `ON DELETE SET NULL` và lưu preferences đã
+  hoạt động đúng.
+
+**Việc tiếp theo của SV-B:** Ngày 14 chạy thử end-to-end cùng Thắng, ghi nhận
+bug còn lại và giữ nguyên dữ liệu/cài đặt đã xác minh.
+
+### Báo cáo kiểm thử tích hợp Ngày 14 — 14/11/2026
+
+- **Tích hợp:** working tree ở branch `vu`, HEAD `a42960b`
+  (`Merge pull request #4 from GH-Courses/Thangb23606582`); thay đổi của nhánh
+  Thắng đã có trong branch hiện tại, không cần merge lại. Không tạo commit hoặc
+  push.
+- **Emulator Android API 37:** tạo task `Day14 e2e task`, xác nhận task xuất
+  hiện trong danh sách và thống kê tăng tổng số từ 1 lên 2; đánh dấu hoàn thành,
+  xác nhận task chuyển sang bộ lọc hoàn thành và thống kê thành 2 tổng/1 hoàn
+  thành/1 chưa hoàn thành; xóa task kiểm thử có xác nhận. Sau dọn dữ liệu, thống
+  kê trở về 1 tổng/0 hoàn thành/1 chưa hoàn thành. Màn danh mục hiển thị trạng
+  thái rỗng sau kịch bản xóa danh mục Ngày 13.
+- **Tích hợp khác đã xác nhận trước đó:** xóa danh mục có task tham chiếu giữ
+  task và đưa `category_id` về `NULL`; theme và thời gian nhắc lưu qua
+  cold-start; responsive danh mục/thống kê đã có widget test.
+- **Kiểm tra tự động:** `flutter analyze --no-pub` đạt **No issues found**;
+  `flutter build apk --debug` thành công tại
+  `build/app/outputs/flutter-apk/app-debug.apk`; `flutter test` có **27 đạt,
+  4 thất bại**, đều trong `test/widget_test.dart`. Một failure liên quan test
+  dashboard/viewport thấp và có log `RenderFlex overflowed by 194 pixels` ở
+  `TasksPage`; ba test còn lại timeout khi `pumpAndSettle` ở test route
+  placeholder, cài đặt và CRUD danh mục. Timeout chưa được xác nhận là lỗi
+  runtime; chi tiết phân loại xem [bug.md](./bug.md).
+- **Giới hạn kiểm thử:** chưa xác nhận luồng sửa task và notification thực tế
+  trên thiết bị; chưa có bằng chứng hai người cùng thao tác kiểm thử trực tiếp.
+  Vì vậy chưa coi toàn bộ gate Ngày 14 là nghiệm thu cuối.
+
+**Việc tiếp theo:** xử lý overflow ở viewport nhỏ và làm ổn định/cập nhật các
+widget test cũ; kiểm tra lại CRUD category/settings bằng test không treo; hoàn
+thiện kiểm thử sửa task và notification trên thiết bị nếu có. Giữ nguyên việc
+không commit/push nếu chưa được yêu cầu.
 
 ### Báo cáo công việc Tuần 2 — SV-A (Thắng) — đối chiếu repository 14/11/2026
 
