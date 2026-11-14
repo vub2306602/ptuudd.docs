@@ -49,3 +49,16 @@ CREATE TABLE tasks (
   ngày giờ cần được chuyển đổi nhất quán khi đọc/ghi.
 - Khi schema thay đổi sau khi phát hành, tăng version database và viết migration;
   không xóa dữ liệu người dùng để né migration.
+
+## Quy ước thống kê
+
+- Tổng quan lấy tổng số task, số đã hoàn thành (`is_completed = 1`) và số chưa
+  hoàn thành (`is_completed = 0`) trực tiếp từ bảng `tasks`. Tỷ lệ hoàn thành
+  bằng số đã hoàn thành chia tổng số; khi chưa có task, tỷ lệ là `0`.
+- Thống kê tuần dùng tuần lịch từ thứ Hai đến Chủ nhật theo ngày đến hạn
+  `due_at`; mỗi ngày trả tổng số task đến hạn và số hiện đang hoàn thành. Ngày
+  không có task vẫn có số liệu bằng `0`; task không có hạn không thuộc biểu đồ.
+- Schema hiện không lưu thời điểm hoàn thành riêng. Vì vậy, số task hoàn thành
+  theo ngày trong thống kê tuần là trạng thái hiện tại của các task đến hạn ngày
+  đó, không biểu thị task đã được hoàn thành đúng ngày ấy. Muốn đo thời điểm
+  hoàn thành thực tế cần thống nhất và migration schema riêng.

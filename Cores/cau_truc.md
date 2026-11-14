@@ -8,21 +8,28 @@ thư mục `Cores`.
 
 Mã nguồn và kế hoạch cần được phân biệt rõ:
 
-- `lib/main.dart` khởi tạo settings đã lưu và gọi app TaskFlow; `lib/app.dart`
-  lắp ghép theme, router và provider.
+- `lib/main.dart` tải settings đã lưu và gọi app TaskFlow; nếu tải preferences
+  thất bại, lỗi được ghi nhận và app vẫn mở để người dùng xem/thử tải lại ở màn
+  Cài đặt. `lib/app.dart` lắp ghép theme, router và provider.
 - `lib/core/database/database_helper.dart` đã tạo SQLite version 1 với hai bảng
-  theo [`schema.md`](./schema.md); model/repository/provider danh mục và provider
-  cài đặt đã được triển khai, đăng ký trong app.
+  theo [`schema.md`](./schema.md); model/repository/provider danh mục, thống kê
+  và cài đặt đã được triển khai, đăng ký trong app.
 - `pubspec.yaml` hiện khai báo `sqflite`, `path`, `provider`,
   `shared_preferences`, `go_router`, `flutter_local_notifications`,
-  `flutter_timezone` và `timezone`. Package biểu đồ chưa được chọn/cài đặt.
+  `flutter_timezone` và `timezone`. Biểu đồ tuần dùng widget Flutter thuần,
+  không cần package biểu đồ ngoài.
 - Router đã có các route chính; dashboard/danh sách, form và chi tiết task hiện
   được nối với TaskProvider/TaskRepository/SQLite. Màn danh mục hỗ trợ CRUD;
-  cài đặt lưu theme/thời gian nhắc mặc định. Thống kê vẫn là giao diện số liệu
-  mẫu; local notification đã nối vào vòng đời Task, đang chờ kiểm thử trên thiết bị.
-- Database được mở khi repository danh mục được gọi; CRUD danh mục đã nối vào
-  giao diện. Màn có loading, empty, error/retry và xác nhận trước khi xóa.
-- Các test hiện có bao phủ cài đặt, danh mục và quy tắc khóa ngoại. Sau khi
+  cài đặt lưu theme/thời gian nhắc mặc định. `StatsRepository` tổng hợp dữ liệu
+  SQLite; `StatsProvider` và màn tổng quan đã nối tổng số, đã hoàn thành, chưa
+  hoàn thành, cùng loading/error/retry và trạng thái rỗng. Biểu đồ tuần đã
+  được triển khai bằng Flutter thuần. Local notification đã nối vào vòng đời
+  Task, đang chờ kiểm thử trên thiết bị.
+- Database được mở khi repository danh mục, task hoặc thống kê được gọi; CRUD
+  danh mục đã nối vào giao diện. Màn có loading, empty, error/retry và xác nhận
+  trước khi xóa.
+- Các test hiện có bao phủ cài đặt, danh mục, quy tắc khóa ngoại và thống kê
+  ở repository/provider/giao diện. Sau khi
   dashboard/form/chi tiết được nối dữ liệu thật, `widget_test.dart` còn kỳ vọng
   nội dung dashboard và route task placeholder cũ; cần cập nhật trước khi dùng
   làm bằng chứng nghiệm thu phần Task.
@@ -72,9 +79,10 @@ không tìm thấy ID bằng trạng thái lỗi và đường quay lại.
 
 #### Entry point
 
-`lib/main.dart` tải settings đã lưu rồi khởi động ứng dụng; `lib/app.dart` là
-composition root chứa cấu hình `MaterialApp.router`, theme và provider cấp ứng
-dụng. Counter mẫu đã được thay bằng entry point TaskFlow; `widget_test.dart`
+`lib/main.dart` tải settings đã lưu rồi khởi động ứng dụng; khi tải settings
+thất bại, lỗi được báo cáo và ứng dụng vẫn chạy với giá trị mặc định để màn Cài
+đặt có thể hiển thị lỗi/thử tải lại. `lib/app.dart` là composition root chứa
+cấu hình `MaterialApp.router`, theme và provider cấp ứng dụng. Counter mẫu đã được thay bằng entry point TaskFlow; `widget_test.dart`
 kiểm tra dashboard và điều hướng tới các khu vực chính.
 
 ## 2. Cấu trúc tổng quan
@@ -140,8 +148,10 @@ lib/
     ├── statistics/
     │   ├── data/
     │   │   └── stats_repository.dart
-    │   └── providers/
-    │       └── stats_provider.dart
+    │   ├── providers/
+    │   │   └── stats_provider.dart
+    │   └── ui/
+    │       └── weekly_task_chart.dart
     └── tasks/
         ├── data/
         │   ├── task.dart
@@ -176,8 +186,8 @@ lib/
 
 | File | Chức năng |
 |---|---|
-| `lib/main.dart` | Điểm vào ứng dụng; tải settings và gọi `runApp(TaskFlowApp(...))`. **Hiện tại:** đã thay counter mẫu bằng entry point TaskFlow. |
-| `lib/app.dart` | Composition root; khai báo `MaterialApp.router`, theme sáng/tối và đăng ký `CategoryProvider`/`SettingsProvider`. **Hiện tại:** đã triển khai. |
+| `lib/main.dart` | Điểm vào ứng dụng; tải settings và gọi `runApp(TaskFlowApp(...))`. Nếu tải preferences lỗi, báo cáo qua `FlutterError` rồi tiếp tục chạy để SettingsPage có thể hiển thị lỗi/thử tải lại. |
+| `lib/app.dart` | Composition root; khai báo `MaterialApp.router`, theme sáng/tối và đăng ký `CategoryProvider`/`StatsProvider`/`SettingsProvider`/`TaskProvider`. **Hiện tại:** đã triển khai. |
 
 ### Hạ tầng dùng chung — `lib/core/`
 
@@ -205,30 +215,36 @@ lib/
 | File | Chức năng dự kiến |
 |---|---|
 | `lib/features/categories/data/category.dart` | Model `Category` và chuyển đổi dữ liệu danh mục giữa Dart/SQLite. Theo schema, model có mã định danh, tên, màu tùy chọn và thời điểm tạo. **Hiện tại:** đã triển khai model cùng `fromMap`/`toMap`. |
-| `lib/features/categories/data/category_repository.dart` | Tầng truy cập dữ liệu danh mục: đọc, thêm, sửa, xóa danh mục. Khi xóa, khóa ngoại đặt `category_id` của task về `NULL`. **Hiện tại:** đã triển khai CRUD; database phải được khởi tạo và bật khóa ngoại bởi helper. |
-| `lib/features/categories/providers/category_provider.dart` | Giữ trạng thái danh mục và cung cấp thao tác tải/CRUD cho giao diện quản lý danh mục; báo trạng thái loading/error, ném lại lỗi để caller xử lý. **Hiện tại:** đã triển khai, đăng ký trong app và được màn CRUD sử dụng. |
-| `lib/features/categories/ui/categories_page.dart` | Hiển thị lưới danh mục pastel từ provider; hỗ trợ thêm/sửa tên và màu, xác nhận trước khi xóa, cùng loading/empty/error/retry state. **Hiện tại:** đã nối provider/repository SQLite và route `/categories`. |
+| `lib/features/categories/data/category_repository.dart` | Tầng truy cập dữ liệu danh mục: đọc, thêm, sửa, xóa danh mục. Khi xóa, khóa ngoại đặt `category_id` của task về `NULL`. **Hiện tại:** đã triển khai CRUD; `category_repository_test.dart` xác nhận task được giữ lại và model đọc lại có `categoryId == null`. |
+| `lib/features/categories/providers/category_provider.dart` | Giữ trạng thái danh mục, cờ đã tải thành công và cung cấp thao tác tải/CRUD; báo loading/error, ném lại lỗi cho caller. **Hiện tại:** đã triển khai và đăng ký trong app. |
+| `lib/features/categories/ui/categories_page.dart` | Hiển thị lưới danh mục pastel; phân biệt tải đầu, rỗng, lỗi đọc danh mục và lỗi tải task liên quan; có thử lại, CRUD và xác nhận xóa. **Hiện tại:** đã nối SQLite và route `/categories`; grid giữ bề rộng thẻ mục tiêu khoảng 220 px, tối đa 4 cột; widget test kiểm tra kích thước 320–1080 px. |
 
 ### Cài đặt — `lib/features/settings/`
 
 | File | Chức năng dự kiến |
 |---|---|
-| `lib/features/settings/providers/settings_provider.dart` | Quản lý `ThemeMode` và thời gian nhắc mặc định (số phút trước hạn, mặc định 15 phút); đọc/lưu bằng `shared_preferences`, báo loading/error và ném lại lỗi để caller xử lý. **Hiện tại:** đã triển khai và đăng ký vào app. |
+| `lib/features/settings/providers/settings_provider.dart` | Quản lý `ThemeMode` và thời gian nhắc mặc định (số phút trước hạn, mặc định 15 phút); đọc/lưu bằng `shared_preferences`, báo loading/error và ném lại lỗi để caller xử lý. **Hiện tại:** đã triển khai và đăng ký vào app; settings được xác nhận còn sau cold-start trên Android emulator và khi tạo provider mới. |
 
 `SettingsPage` trong `lib/core/router/app_pages.dart` cho phép chọn theme
-hệ thống/sáng/tối và thời gian nhắc trước hạn; màn đã nối `SettingsProvider`
-và được kiểm thử qua route.
+hệ thống/sáng/tối và thời gian nhắc trước hạn; màn đã nối `SettingsProvider`,
+có loading/error và thao tác tải lại. Không có empty state dạng danh sách vì
+đây là form các lựa chọn cài đặt cố định.
 
 ### Thống kê — `lib/features/statistics/`
 
 | File | Chức năng dự kiến |
 |---|---|
-| `lib/features/statistics/data/stats_repository.dart` | Tổng hợp số liệu từ SQLite, chủ yếu truy vấn bảng `tasks` theo hợp đồng schema; cung cấp dữ liệu tổng quan/tuần và xử lý trường hợp chưa có dữ liệu. |
-| `lib/features/statistics/providers/stats_provider.dart` | Tải và quản lý trạng thái dữ liệu thống kê cho màn hình; cung cấp loading/error/empty state và dữ liệu cho các thành phần số liệu/biểu đồ. |
+| `lib/features/statistics/data/stats_repository.dart` | **Đã triển khai truy vấn SQLite:** tổng số, đã hoàn thành, chưa hoàn thành, tỷ lệ hoàn thành và số task đến hạn/đang hoàn thành theo từng ngày từ thứ Hai đến Chủ nhật; ngày không có task trả về 0. Không có `completed_at`, nên số liệu tuần không thể xác định ngày task thực sự được hoàn thành. |
+| `lib/features/statistics/providers/stats_provider.dart` | Tải tổng quan và thống kê tuần từ `StatsRepository`, quản lý loading/error, giữ dữ liệu tổng số/đã hoàn thành/chưa hoàn thành cùng bảy ngày và ném lại lỗi cho màn hình xử lý. **Đã triển khai và đăng ký trong app.** |
+| `lib/features/statistics/ui/weekly_task_chart.dart` | Biểu đồ cột xếp chồng theo bảy ngày, tách task đến hạn đang hoàn thành/chưa hoàn thành; hiển thị trạng thái rỗng và diễn giải giới hạn `completed_at`. **Đã triển khai bằng Flutter thuần, không thêm dependency.** |
 
 > `app_pages.dart` giữ shell, thống kê và cài đặt; giao diện task và danh mục
-> nằm trong các feature tương ứng. Task và category đã có luồng CRUD SQLite;
-> thống kê vẫn dùng dữ liệu mẫu; local notification đã tích hợp nhưng chưa kiểm thử trên thiết bị.
+> nằm trong các feature tương ứng. Thẻ thống kê đổi 2/3 cột theo chiều rộng;
+> widget test kiểm tra hàng thẻ và biểu đồ ở kích thước 320–1024 px, không phát
+> hiện overflow. Task và category đã có luồng CRUD SQLite; repository, provider,
+> màn tổng quan và biểu đồ tuần đã nối SQLite. Biểu đồ phản ánh trạng thái hiện
+> tại theo ngày đến hạn, không có lịch sử thời điểm hoàn thành. Local
+> notification đã tích hợp nhưng chưa kiểm thử trên thiết bị.
 
 ## 5. Tài liệu trong `Docs/ptuudd.docs/Cores`
 

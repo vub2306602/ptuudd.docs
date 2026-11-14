@@ -73,11 +73,18 @@ Không sửa trực tiếp vùng của bạn học. Nếu cần sửa file chung
 
 ### Tuần 2
 
-1. Viết `StatsRepository` bằng truy vấn SQLite tổng hợp, đọc `tasks` trực tiếp.
-2. Xác định ý nghĩa số liệu và xử lý dữ liệu rỗng.
-3. Làm `StatsProvider`, màn tổng quan và biểu đồ theo tuần.
-4. Thêm loading/error/empty states, responsive cho grid/biểu đồ.
-5. Chỉ nhận màn Lịch nếu P0/P1 đạt checkpoint và cả nhóm đồng ý.
+1. `StatsRepository` tổng hợp tổng số/đã hoàn thành/chưa hoàn thành/tỷ lệ hoàn thành và thống kê số task đến hạn từng ngày trong tuần từ SQLite.
+2. Tuần thống kê chạy từ thứ Hai đến Chủ nhật; ngày và trạng thái rỗng đều có số liệu bằng 0. Vì schema chưa có `completed_at`, không diễn giải task hoàn thành theo ngày đến hạn là task được hoàn thành trong ngày đó.
+3. `StatsProvider`, màn tổng quan và biểu đồ tuần đã nối SQLite; biểu đồ dùng Flutter thuần và ghi rõ số liệu là trạng thái hiện tại theo ngày đến hạn.
+4. Loading/error/empty cho danh mục, thống kê và cài đặt đã được rà soát.
+   Responsive grid/biểu đồ cũng đã được kiểm tra bằng widget test ở các chiều
+   rộng hẹp, tại ngưỡng đổi số cột và trên màn rộng; chưa kiểm tra responsive
+   thủ công trên emulator ở nhiều kích thước.
+5. Đã kiểm tra trên Android emulator việc xóa danh mục có task sử dụng: task
+   vẫn tồn tại và `category_id` về `NULL`; theme/thời gian nhắc vẫn còn sau
+   force-stop và khởi động lại app. Test lưu preferences qua provider mới cũng
+   đạt.
+6. Chỉ nhận màn Lịch nếu P0/P1 đạt checkpoint và cả nhóm đồng ý.
 
 ### Tuần 3
 
@@ -92,6 +99,13 @@ Không sửa trực tiếp vùng của bạn học. Nếu cần sửa file chung
 - Nếu build hỏng sau merge, tìm commit/PR liên quan, báo ngay và sửa trước feature mới.
 - Nếu lỗi schema, dừng thay đổi liên quan và thống nhất migration; không xóa database để né migration.
 - Mức độ: P0 app không chạy/mất dữ liệu; P1 luồng chính hỏng; P2 chức năng phụ/UI; P3 cải tiến.
+- Báo cáo kiểm thử tích hợp Ngày 14 và danh sách lỗi hiện tại nằm trong
+  [checkpoint.md](checkpoint.md) và [bug.md](bug.md). Debug APK build được,
+  analyzer đạt; test suite hiện có 4 failure trong `test/widget_test.dart`.
+- Việc kế tiếp: sửa overflow ở viewport nhỏ, cập nhật hoặc thay các widget test
+  còn kỳ vọng placeholder/đang timeout; xác minh riêng notification và sửa task
+  trên thiết bị. Không xem các timeout của widget test là lỗi runtime cho tới
+  khi tái hiện được bằng luồng ứng dụng.
 
 ## Chuẩn bị demo cuối
 
