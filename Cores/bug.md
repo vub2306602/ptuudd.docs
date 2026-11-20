@@ -38,15 +38,63 @@ Không commit hoặc push các thay đổi kiểm thử/tài liệu này.
 | Mã lỗi Ngày 14 | Trạng thái mới | Kết quả |
 |---|---|---|
 | DAY14-UI-01 | Đã sửa | Empty state của `TasksPage` dùng vùng cuộn; test viewport 800×600 không còn lỗi layout. |
-| DAY14-TEST-01 | Đã sửa | Dashboard test dùng kích thước mục tiêu, repository giả và lời nhắc hiện tại; 39/39 test suite đạt. |
+| DAY14-TEST-01 | Đã sửa | Dashboard test dùng kích thước mục tiêu, repository giả và lời nhắc hiện tại; 31/31 test suite đạt. |
 | DAY14-TEST-02 | Đã sửa | Widget test kiểm tra route tạo/chi tiết/sửa theo màn hình thật; việc tải task khỏi `initState` tránh notify provider giữa lúc build. |
 | DAY14-TEST-03 | Đã sửa | Test settings chạy với repository giả và pump theo khoảng hữu hạn; lưu theme/thời gian nhắc tiếp tục đạt. |
 | DAY14-TEST-04 | Đã sửa | Test tích hợp danh mục dùng repository giả; finder khớp nội dung thẻ có tên và số task trên cùng dòng. |
 
-Kiểm tra sau sửa: `flutter test --reporter compact` **39 passed**;
+Kiểm tra sau sửa: `flutter test --reporter compact` **31 passed**;
 `flutter analyze --no-pub` **No issues found**; `flutter build apk --debug`
 thành công. Đã cài APK và mở app trên thiết bị Android 16/API 36 đang kết nối.
 Quyền thông báo đang được cấp. Chưa kiểm tra được notification phát thực tế:
 Android từ chối thao tác chạm tự động qua `adb` do thiếu `INJECT_EVENTS`, nên
 các điều kiện foreground/background, từ chối quyền, thời điểm nhắc và hành vi
 đến hạn vẫn cần thử trực tiếp trên thiết bị.
+
+## Cập nhật hoàn thành Ngày 15 — 20/11/2026
+
+- Rà soát database/category/settings/statistics/router/app composition không
+  phát hiện thay đổi schema hoặc migration cần thiết.
+- Sửa layout empty state của `TasksPage` để vùng danh sách có thể cuộn ở
+  viewport thấp thay vì cố định cột trong `Expanded`.
+- Sửa `TaskProvider.getTaskById` để truy vấn chi tiết không kích hoạt loading
+  chung và `notifyListeners()` trong lúc widget đang build.
+- Cập nhật `test/widget_test.dart` theo route/UI hiện tại, dùng repository giả
+  và các phép pump có thời lượng hữu hạn thay cho `pumpAndSettle`.
+- Kiểm tra dữ liệu rỗng bằng toàn bộ widget test category/statistics/settings
+  và router.
+- Xác nhận lưu theme/thời gian nhắc bằng `SettingsProvider` test; dữ liệu
+  SQLite/category/task tiếp tục được kiểm tra bằng repository test riêng.
+
+Kiểm tra Ngày 15:
+
+- `flutter test --reporter compact`: **31 passed**
+- `flutter analyze --no-pub`: **No issues found**
+- `flutter build apk --debug`: thành công, artifact
+  `build/app/outputs/flutter-apk/app-debug.apk`
+
+## Cập nhật hoàn thành Ngày 16 — 20/11/2026
+
+- Theme sáng/tối, điều hướng shell và persistence cài đặt đã đạt widget test.
+- CRUD danh mục và các trạng thái loading/error/empty đã đạt test.
+- Repository test xác nhận khi xóa danh mục đang có task tham chiếu, task vẫn
+  được giữ và `category_id` chuyển thành `NULL`.
+- App TaskFlow đã được xác nhận đang foreground trên SM A125F.
+- Kiểm tra Ngày 16:
+  - Category/repository/provider/page: **10 passed**
+  - Navigation/theme/settings: **6 passed**
+  - `flutter analyze --no-pub`: **No issues found**
+
+## Cập nhật Ngày 17 — build và cài thử Android — 20/11/2026
+
+- `flutter analyze --no-pub`: **No issues found**.
+- `flutter build apk --debug`: thành công; artifact tại
+  `build/app/outputs/flutter-apk/app-debug.apk`.
+- Cài cập nhật APK bằng `adb install -r` trên SM A125F, Android 12/API 31:
+  **Success**. Không gỡ app trước khi cài.
+- Mở app thành công; `MainActivity` ở trạng thái resumed/foreground.
+- Logcat sau khởi động không ghi nhận `FATAL EXCEPTION`, crash AndroidRuntime
+  hoặc lỗi `E/flutter` trong khoảng kiểm tra 5 giây.
+- Không phát hiện lỗi cấu hình/build nên không cần sửa cấu hình.
+- Chưa xác nhận notification thực tế foreground/background; icon/splash tùy
+  chỉnh chưa làm vì không cần cho bản cài thử.

@@ -17,6 +17,8 @@
 | Ngày 7 | CRUD và màn lõi chạy với SQLite; báo cáo tuần 1 | ☐ | ☐ | |
 | Ngày 14 | Ghép luồng chính, hoàn thiện chức năng, chạy trên emulator | ☐ | ☐ | |
 | Ngày 17 | Sửa lỗi, cấu hình ứng dụng, APK chạy trên thiết bị | ☐ | ☐ | |
+| Ngày 18 | Báo cáo kiến trúc, database và các màn SV-B phụ trách | ☐ | [x] | [bao_cao_so_luoc.md](./bao_cao_so_luoc.md) |
+| Ngày 19 | Chuẩn bị dữ liệu demo và ảnh minh chứng cho các màn chính | ☐ | [x] | SM A125F; [ảnh minh chứng](../anh/minh-chung-ngay-19/) |
 | Ngày 21 | Demo, báo cáo, kiểm tra cuối và nộp | ☐ | ☐ | |
 
 ## Checkpoint 0 — Khởi động và kiểm kê hiện trạng
@@ -359,7 +361,7 @@ luồng task/notification hiện có. Chỉ đánh dấu kết quả đã có b�
 |---|---|---|
 | Sửa lỗi task và giao diện rỗng | Đã sửa | `TaskDetailPage` trước đây gọi `TaskProvider.getTaskById` đồng bộ trong `initState`, khiến provider phát thông báo khi widget đang build. Việc tải được hoãn đến sau frame hiện tại. Trạng thái rỗng của danh sách được đặt trong vùng cuộn, tránh tràn khi viewport thấp. |
 | Kiểm tra dữ liệu rỗng, task không hạn, cập nhật và xóa | Đã kiểm tra tự động | Thêm `test/task_repository_test.dart` cho bảng rỗng, task không hạn/không nhắc, cập nhật, hoàn thành, xóa và tiêu đề chỉ có khoảng trắng; thêm `test/task_provider_test.dart` cho danh sách rỗng và vòng đời CRUD/đồng bộ lịch nhắc với notification fake. |
-| Sửa widget test cũ thuộc luồng tích hợp | Đã sửa và chạy lại | `test/widget_test.dart` dùng repository giả, route và nội dung theo giao diện hiện tại, không còn chờ `pumpAndSettle` vô hạn; có kiểm tra màn thấp 800×600. Toàn bộ test suite đạt **39/39**. |
+| Sửa widget test cũ thuộc luồng tích hợp | Đã sửa và chạy lại | `test/widget_test.dart` dùng repository giả, route và nội dung theo giao diện hiện tại, không còn chờ `pumpAndSettle` vô hạn; có kiểm tra màn thấp 800×600. Toàn bộ test suite đạt **31/31**. |
 | Analyzer | Đạt | `flutter analyze --no-pub`: **No issues found**. |
 | Build Android | Đạt | `flutter build apk --debug` thành công; artifact tại `26-27hk1-ct48401-project-vub2306602/build/app/outputs/flutter-apk/app-debug.apk`. |
 | Cài/chạy trên Android | Đạt một phần | APK đã cài cập nhật bằng `adb install -r` và mở được MainActivity trên thiết bị đang kết nối `2602BRT18C`, Android 16/API 36. Quyền `POST_NOTIFICATIONS` đang được cấp; thiết bị không được nhận diện là Pixel 10. App mở được và hiển thị các công việc đang có trên thiết bị. |
@@ -372,16 +374,112 @@ Ngày 17 và nghiệm thu Ngày 21 vẫn để nguyên trạng thái chưa hoàn
 bằng chứng nhận notification thật, thử foreground/background và bộ ảnh/demo.
 Không tạo commit hoặc push.
 
+### Báo cáo Ngày 15 — sửa lỗi nền và kiểm tra cold-start — 20/11/2026
+
+- [x] Rà soát database helper/schema version 1 và kiểm tra khóa ngoại
+  `ON DELETE SET NULL`; không phát hiện lỗi migration hoặc mất dữ liệu cần sửa.
+- [x] Rà soát Category/Settings/Statistics/Router/App composition; các provider
+  vẫn được lắp ghép đúng trong `TaskFlowApp` và route chính mở đúng màn hình.
+- [x] Sửa empty state của danh sách công việc để cuộn được trên viewport thấp,
+  loại bỏ overflow layout đã xuất hiện trong `widget_test.dart`.
+- [x] Sửa truy vấn chi tiết công việc không phát loading chung trong lúc widget
+  đang build, tránh `setState/markNeedsBuild` đồng thời với quá trình build.
+- [x] Cập nhật và đồng bộ widget test với route/UI thực tế; không còn
+  `pumpAndSettle` vô hạn trong `widget_test.dart`.
+- [x] Kiểm tra dữ liệu rỗng category/statistics/task và persistence
+  theme/reminder bằng provider/widget/repository test.
+- [x] `flutter test --reporter compact`: **31 passed**.
+- [x] `flutter analyze --no-pub`: **No issues found**.
+- [x] `flutter build apk --debug`: thành công tại
+  `build/app/outputs/flutter-apk/app-debug.apk`.
+
+**Giới hạn còn lại:** chưa xác nhận notification phát thực tế trên thiết bị,
+ảnh demo và diễn tập cuối chưa được ghi nhận.
+
+### Báo cáo Ngày 16 — theme, điều hướng và CRUD danh mục — 20/11/2026
+
+- [x] Kiểm tra chuyển theme sáng/tối và persistence bằng widget test.
+- [x] Kiểm tra điều hướng tới Danh mục, Thống kê và Cài đặt bằng NavigationBar
+  ở kích thước thiết bị.
+- [x] Kiểm tra CRUD danh mục: tạo, đọc, sửa, xóa và trạng thái rỗng.
+- [x] Kiểm tra repository xóa danh mục đang được task tham chiếu: task vẫn
+  tồn tại và `category_id` được đưa về `NULL`.
+- [x] Kiểm tra danh mục không có dữ liệu không bị báo thành danh sách rỗng sai
+  khi đang tải hoặc khi tải lỗi.
+- [x] Kiểm tra app đang foreground trên SM A125F; SharedPreferences hiện lưu
+  theme sáng.
+- [x] `flutter test test/category_repository_test.dart
+  test/category_provider_test.dart test/categories_page_test.dart`: **10 passed**.
+- [x] `flutter test test/navigation_theme_test.dart test/settings_provider_test.dart
+  test/settings_page_test.dart`: **6 passed**.
+- [x] `flutter analyze --no-pub`: **No issues found**.
+
 ## Checkpoint 4 — Ngày 17: bản cài thử
 
-- [ ] Đã sửa lỗi chặn và kiểm tra lại tính năng bị ảnh hưởng.
+- [x] Đã sửa lỗi chặn đã xác định ở Ngày 15–16; test liên quan đạt.
 - [ ] Tên app, icon và splash đã cập nhật nếu nằm trong phạm vi nền tảng đã chốt.
-- [ ] Build APK thành công; lưu đường dẫn artifact và commit.
-- [ ] Cài trên thiết bị thật, kiểm tra SQLite và quyền thông báo.
+- [x] Build APK thành công; artifact lưu tại
+  `build/app/outputs/flutter-apk/app-debug.apk` (build local, chưa tạo commit).
+- [x] Cài cập nhật APK bằng `adb install -r` trên SM A125F (Android 12/API 31);
+  app mở và `MainActivity` ở trạng thái resumed. Không thấy FATAL/Flutter
+  exception trong log khởi động 5 giây.
+- [ ] Kiểm tra đầy đủ SQLite và quyền thông báo sau cài đặt trên thiết bị.
 - [ ] Thử thông báo foreground/background; ghi giới hạn theo phiên bản Android.
-- [ ] Không còn crash đã biết mà chưa được ghi nhận.
+- [x] Không tái hiện crash khi cài và mở app trong lần kiểm tra này.
 
-**Biên bản:** Thiết bị/Android ____ · Build ____ · Kết quả ____ · Lỗi còn lại ____
+**Biên bản Ngày 17:** SM A125F / Android 12 (API 31) · `flutter analyze
+--no-pub`: No issues found · `flutter build apk --debug`: thành công ·
+`adb install -r`: Success · mở MainActivity: thành công · lỗi build/runtime
+khởi động: không quan sát được. Icon/splash và notification end-to-end còn
+chưa kiểm tra; không tạo commit.
+
+### Báo cáo Ngày 17 — build và cài thử Android — 20/11/2026
+
+- [x] Build APK debug từ mã nguồn hiện tại thành công.
+- [x] Cài cập nhật bằng `adb install -r` lên thiết bị đang kết nối
+  `SM A125F` (serial `R58NC1WL2TT`, Android 12/API 31), không gỡ app trước khi
+  cài.
+- [x] Mở app bằng launcher; xác nhận
+  `com.example.ct484project/.MainActivity` đang resumed/foreground.
+- [x] Kiểm tra logcat sau khi xóa log cũ và khởi động: không có `FATAL
+  EXCEPTION`, `AndroidRuntime` crash hay `E/flutter` trong 5 giây đầu.
+- [x] `flutter analyze --no-pub`: **No issues found**.
+- [ ] Chưa thử thao tác CRUD trên thiết bị ở lượt Ngày 17; các luồng bắt buộc
+  trước đó đã có widget/repository test ở Ngày 15–16.
+- [ ] Chưa kiểm tra notification thực tế foreground/background hoặc quyền
+  notification trên thiết bị.
+- [ ] Không thay đổi icon/splash tùy chỉnh: không ảnh hưởng khả năng cài/chạy
+  bản thử; để sau nếu còn thời gian.
+
+### Báo cáo Ngày 18 — kiến trúc và các màn SV-B — 20/11/2026
+
+- [x] Viết [báo cáo sơ lược](./bao_cao_so_luoc.md) về kiến trúc Flutter,
+  composition root, luồng UI → Provider → Repository → SQLite/SharedPreferences,
+  schema và migration, CRUD danh mục, thống kê, cài đặt và router.
+- [x] Đối chiếu mô tả với mã nguồn hiện tại và
+  [`schema.md`](./schema.md); ghi rõ các giới hạn đã xác định: schema chưa lưu
+  thời điểm hoàn thành và notification foreground/background chưa được kiểm
+  thử end-to-end.
+- [x] Dẫn kết quả test/analyzer từ các checkpoint trước, không chạy lại test
+  vì lần cập nhật này chỉ thay đổi tài liệu.
+
+### Báo cáo Ngày 19 — dữ liệu demo và ảnh minh chứng — 20/11/2026
+
+- [x] Trên SM A125F (Android 12/API 31), chuẩn bị 4 danh mục:
+  `CongViec`, `HocTap`, `GiaDinh`, `SucKhoe`; tạo 3 công việc demo.
+- [x] Chụp và lưu ảnh màn công việc, danh mục (đủ cả 4 tên), tổng quan thống
+  kê, biểu đồ tuần và cài đặt ở theme sáng/tối tại
+  [thư mục minh chứng Ngày 19](../anh/minh-chung-ngay-19/).
+- [x] Đối chiếu database trích từ app: `PRAGMA integrity_check` trả `ok`;
+  4 danh mục, 3 công việc (0 hoàn thành, 3 chưa hoàn thành), không có task
+  tham chiếu danh mục không tồn tại. Theme `light` đã được lưu trong
+  preferences.
+- [x] Thống kê trên app khớp dữ liệu: 3 tổng, 0 hoàn thành, 3 chưa hoàn thành;
+  biểu đồ tuần hiển thị 2 công việc đến hạn ngày 21/11.
+- [ ] Trước khi trình bày, biên tập lại nội dung công việc đầu tiên: tiêu đề
+  hiện có lỗi gõ (`Hoành thành báo cáo`) và mô tả còn là chuỗi nháp
+  (`Gggbgfd`). Các ảnh thống kê/danh mục/theme hiện không phụ thuộc nội dung
+  nháp này.
 
 ## Checkpoint 5 — Ngày 21: nghiệm thu và nộp
 

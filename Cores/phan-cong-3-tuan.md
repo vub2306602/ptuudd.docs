@@ -260,11 +260,19 @@ phải thời điểm hạn chính xác.
 
 #### B — Vũ
 
-- **Ngày 15:** sửa lỗi database, category, settings, statistics, router và app composition; kiểm tra dữ liệu rỗng và lưu trữ sau khởi động lại.
-- **Ngày 16:** kiểm tra theme sáng/tối, điều hướng, CRUD danh mục và xóa danh mục có task tham chiếu.
-- **Ngày 17:** phối hợp build/cài thử Android; sửa lỗi cấu hình/build; chỉ làm icon/splash nếu các luồng bắt buộc đã ổn định.
-- **Ngày 18:** viết phần báo cáo về kiến trúc, schema/database, danh mục, thống kê, cài đặt và điều hướng.
-- **Ngày 19:** chuẩn bị dữ liệu demo và ảnh minh chứng cho danh mục, thống kê, theme và các màn chính.
+- **Ngày 15:** **[Đã hoàn thành 20/11/2026]** sửa lỗi database, category,
+  settings, statistics, router và app composition; kiểm tra dữ liệu rỗng và
+  lưu trữ sau khởi động lại. Bổ sung fix empty state viewport thấp và truy vấn
+  task chi tiết không phát loading trong lúc build; đồng bộ widget test với
+  route/UI thật.
+- **Ngày 16:** **[Đã hoàn thành 20/11/2026]** kiểm tra theme sáng/tối,
+  điều hướng, CRUD danh mục và xóa danh mục có task tham chiếu.
+- **Ngày 17:** **[Đã hoàn thành phần build/cài thử 20/11/2026]** build APK
+  debug và cài cập nhật lên SM A125F; app mở được, không thấy lỗi khởi động
+  trong log kiểm tra. Không phát hiện lỗi cấu hình/build cần sửa. Icon/splash
+  tùy chỉnh chưa làm vì không thuộc P0/P1 và không cần thiết cho lượt cài thử.
+- **Ngày 18:** **[Đã hoàn thành 20/11/2026]** viết báo cáo sơ lược về kiến trúc, schema/database, danh mục, thống kê, cài đặt và điều hướng tại [bao_cao_so_luoc.md](./bao_cao_so_luoc.md).
+- **Ngày 19:** **[Đã hoàn thành 20/11/2026]** chuẩn bị 4 danh mục, 3 công việc demo; chụp ảnh màn công việc, danh mục, thống kê/biểu đồ và theme sáng/tối trên SM A125F. Database qua `integrity_check`; xem [ảnh minh chứng](../anh/minh-chung-ngay-19/).
 - **Ngày 20:** tập demo phần mình; giải thích database/router/provider và hỏi đáp chéo với Thắng.
 - **Ngày 21:** kiểm tra lại app từ entry point đến các màn; cùng Thắng hoàn tất demo và nộp báo cáo.
 
