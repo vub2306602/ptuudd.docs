@@ -347,6 +347,31 @@ hoàn thành SV-A này.
 tra CRUD với task rỗng/không hạn và trường hợp quyền bị từ chối; ghi lại giới hạn
 OS, chuẩn bị dữ liệu demo và báo cáo phần Công việc/Thông báo.
 
+### Báo cáo Tuần 3 — SV-A — đối chiếu mã nguồn và thiết bị ngày 20/11/2026
+
+Phạm vi đối chiếu: đầu việc SV-A trong
+[`phan-cong-3-tuan.md`](./phan-cong-3-tuan.md), trình tự trong
+[`next_step_guide.md`](./next_step_guide.md), lỗi Ngày 14 trong
+[`bug.md`](./bug.md), hợp đồng dữ liệu trong [`schema.md`](./schema.md) và
+luồng task/notification hiện có. Chỉ đánh dấu kết quả đã có bằng chứng.
+
+| Đầu việc | Kết quả | Bằng chứng / giới hạn |
+|---|---|---|
+| Sửa lỗi task và giao diện rỗng | Đã sửa | `TaskDetailPage` trước đây gọi `TaskProvider.getTaskById` đồng bộ trong `initState`, khiến provider phát thông báo khi widget đang build. Việc tải được hoãn đến sau frame hiện tại. Trạng thái rỗng của danh sách được đặt trong vùng cuộn, tránh tràn khi viewport thấp. |
+| Kiểm tra dữ liệu rỗng, task không hạn, cập nhật và xóa | Đã kiểm tra tự động | Thêm `test/task_repository_test.dart` cho bảng rỗng, task không hạn/không nhắc, cập nhật, hoàn thành, xóa và tiêu đề chỉ có khoảng trắng; thêm `test/task_provider_test.dart` cho danh sách rỗng và vòng đời CRUD/đồng bộ lịch nhắc với notification fake. |
+| Sửa widget test cũ thuộc luồng tích hợp | Đã sửa và chạy lại | `test/widget_test.dart` dùng repository giả, route và nội dung theo giao diện hiện tại, không còn chờ `pumpAndSettle` vô hạn; có kiểm tra màn thấp 800×600. Toàn bộ test suite đạt **39/39**. |
+| Analyzer | Đạt | `flutter analyze --no-pub`: **No issues found**. |
+| Build Android | Đạt | `flutter build apk --debug` thành công; artifact tại `26-27hk1-ct48401-project-vub2306602/build/app/outputs/flutter-apk/app-debug.apk`. |
+| Cài/chạy trên Android | Đạt một phần | APK đã cài cập nhật bằng `adb install -r` và mở được MainActivity trên thiết bị đang kết nối `2602BRT18C`, Android 16/API 36. Quyền `POST_NOTIFICATIONS` đang được cấp; thiết bị không được nhận diện là Pixel 10. App mở được và hiển thị các công việc đang có trên thiết bị. |
+| Thử thông báo thực tế | Chưa xác nhận | Code hiện lên lịch một thông báo tại `reminderAt`; không có thông báo thứ hai riêng tại `dueAt`. Chưa tạo được kịch bản task thử và xác nhận thời điểm nhận thông báo. `adb shell input tap` bị Android từ chối vì thiếu quyền `INJECT_EVENTS`; do vậy không kết luận thông báo foreground/background, quyền bị từ chối, độ trễ hoặc nhận thông báo thực tế. Test provider chỉ dùng notification fake, không giả nhận kết quả thiết bị. |
+| Ảnh demo và diễn tập | Chưa làm | Chưa lưu ảnh minh chứng hoặc ghi nhận buổi diễn tập/hỏi đáp chéo. |
+
+**Kết luận SV-A:** các lỗi UI/provider có thể tái hiện đã sửa; CRUD được kiểm tra
+bằng repository/provider test, analyzer và build đều đạt. Checkpoint tích hợp
+Ngày 17 và nghiệm thu Ngày 21 vẫn để nguyên trạng thái chưa hoàn tất vì chưa có
+bằng chứng nhận notification thật, thử foreground/background và bộ ảnh/demo.
+Không tạo commit hoặc push.
+
 ## Checkpoint 4 — Ngày 17: bản cài thử
 
 - [ ] Đã sửa lỗi chặn và kiểm tra lại tính năng bị ảnh hưởng.

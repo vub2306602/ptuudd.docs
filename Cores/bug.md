@@ -30,3 +30,23 @@ chức năng phụ hoặc kiểm thử cản trở phát hành; P3 = cải tiế
   vi kiểm thử này.
 
 Không commit hoặc push các thay đổi kiểm thử/tài liệu này.
+
+## Cập nhật xử lý Tuần 3 — 20/11/2026
+
+Đối chiếu lại repository sau các thay đổi SV-A:
+
+| Mã lỗi Ngày 14 | Trạng thái mới | Kết quả |
+|---|---|---|
+| DAY14-UI-01 | Đã sửa | Empty state của `TasksPage` dùng vùng cuộn; test viewport 800×600 không còn lỗi layout. |
+| DAY14-TEST-01 | Đã sửa | Dashboard test dùng kích thước mục tiêu, repository giả và lời nhắc hiện tại; 39/39 test suite đạt. |
+| DAY14-TEST-02 | Đã sửa | Widget test kiểm tra route tạo/chi tiết/sửa theo màn hình thật; việc tải task khỏi `initState` tránh notify provider giữa lúc build. |
+| DAY14-TEST-03 | Đã sửa | Test settings chạy với repository giả và pump theo khoảng hữu hạn; lưu theme/thời gian nhắc tiếp tục đạt. |
+| DAY14-TEST-04 | Đã sửa | Test tích hợp danh mục dùng repository giả; finder khớp nội dung thẻ có tên và số task trên cùng dòng. |
+
+Kiểm tra sau sửa: `flutter test --reporter compact` **39 passed**;
+`flutter analyze --no-pub` **No issues found**; `flutter build apk --debug`
+thành công. Đã cài APK và mở app trên thiết bị Android 16/API 36 đang kết nối.
+Quyền thông báo đang được cấp. Chưa kiểm tra được notification phát thực tế:
+Android từ chối thao tác chạm tự động qua `adb` do thiếu `INJECT_EVENTS`, nên
+các điều kiện foreground/background, từ chối quyền, thời điểm nhắc và hành vi
+đến hạn vẫn cần thử trực tiếp trên thiết bị.
