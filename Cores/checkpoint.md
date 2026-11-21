@@ -372,6 +372,35 @@ Ngày 17 và nghiệm thu Ngày 21 vẫn để nguyên trạng thái chưa hoàn
 bằng chứng nhận notification thật, thử foreground/background và bộ ảnh/demo.
 Không tạo commit hoặc push.
 
+### Cập nhật Ngày 15 — 21/11/2026
+
+Đầu việc “sửa database, category, settings, statistics, router và app composition;
+kiểm tra dữ liệu rỗng và lưu trữ sau khởi động lại” đã đạt ở mức kiểm thử tự động:
+
+- `DatabaseHelper` có migration hook `onUpgrade` cho các version tiếp theo,
+  không xóa dữ liệu hiện có để né migration.
+- Repository task/category đã được kiểm thử đọc lại sau khi đóng-mở database.
+- Settings provider đã kiểm thử khôi phục theme và thời gian nhắc bằng instance mới.
+- Repository thống kê đã kiểm thử overview rỗng và seven zero-count days.
+- Category/task đã kiểm thử khóa ngoại và `ON DELETE SET NULL`.
+- Router/theme đã kiểm thử điều hướng và chuyển sáng/tối bằng widget test.
+- `flutter test -j 1 --reporter compact`: 41/41 test passed.
+- `flutter analyze --no-pub`: No issues found.
+- Còn cần kiểm thử cold-start thực tế trên thiết bị cho SQLite và SharedPreferences;
+  bộ kiểm thử hiện là bằng chứng trên FFI và provider, không thay thế thiết bị.
+
+### Cập nhật Ngày 16 — 21/11/2026
+
+Đầu việc “kiểm tra theme sáng/tối, điều hướng, CRUD danh mục và xóa danh mục có task tham chiếu” đã đạt bằng kiểm thử tự động:
+
+- Theme được kiểm tra chuyển từ tối sang sáng và ngược lại trong shell app.
+- Điều hướng Công việc/Danh mục/Thống kê/Cài đặt được kiểm tra bằng widget test.
+- CRUD danh mục được kiểm tra tạo/sửa/xóa bằng giao diện test.
+- Repository được kiểm tra bật khóa ngoại, giữ task sau khi xóa category và
+  chuyển `category_id` của task liên quan thành `NULL`.
+- `flutter test -j 1 --reporter compact`: toàn bộ test suite passed.
+- `flutter analyze --no-pub`: No issues found.
+
 ## Checkpoint 4 — Ngày 17: bản cài thử
 
 - [ ] Đã sửa lỗi chặn và kiểm tra lại tính năng bị ảnh hưởng.
@@ -382,6 +411,46 @@ Không tạo commit hoặc push.
 - [ ] Không còn crash đã biết mà chưa được ghi nhận.
 
 **Biên bản:** Thiết bị/Android ____ · Build ____ · Kết quả ____ · Lỗi còn lại ____
+
+### Cập nhật Ngày 17 — 21/11/2026
+
+- Tên hiển thị Android đã được đổi từ scaffold mẫu sang `TaskFlow`.
+- Đã thêm `POST_NOTIFICATIONS` và `VIBRATE` trong Android manifest.
+- Đã cấu hình nền splash pastel và biểu tượng TaskFlow dạng dấu kiểm.
+- Đã thay icon launcher các độ phân giải `mdpi`, `hdpi`, `xhdpi`, `xxhdpi`,
+  `xxxhdpi` bằng branding TaskFlow thay biểu tượng Flutter mặc định.
+- `flutter build apk --debug` đạt; artifact:
+  `build/app/outputs/flutter-apk/app-debug.apk`.
+- APK đã cài thành công bằng `adb install -r` trên Samsung Galaxy A12
+  (SM-A125F), package `com.example.ct484project`, và app process đã chạy.
+- Quyền notification được package báo mức mặc định cho phép; runtime
+  foreground/background, thời điểm đến hạn và thông báo thực tế chưa được
+  xác nhận qua tương tác thiết bị.
+- Ảnh màn hình bằng chứng:
+  `build/taskflow-day17.png`.
+
+### Cập nhật Ngày 18 — 21/11/2026
+
+- Đã hoàn thành `bao_cao_so_luoc.md` cho phần kiến trúc, schema/database,
+  công việc/danh mục, thống kê, cài đặt, điều hướng, Android và kiểm thử.
+- Báo cáo phân biệt rõ phần đã có bằng chứng và phần còn giới hạn.
+- Trạng thái notification, demo ảnh minh chứng và nghiệm thu Ngày 21 vẫn chưa
+  được đánh dấu hoàn tất.
+
+### Cập nhật Ngày 19 — 21/11/2026
+
+- Đã chuẩn bị `du_lieu_demo.sql` với 4 danh mục và 5 công việc:
+  Công việc, Học tập, Gia đình, Sức khỏe.
+- Dữ liệu có 3 task hoàn thành và 2 task chưa hoàn thành.
+- Thống kê demo: tổng 5, hoàn thành 3, chưa hoàn thành 2.
+- `navigation_theme_test.dart` có fake repository demo và test xác nhận 4 danh
+  mục, 5 công việc, thống kê 5/3/2.
+- `flutter test -j 1 --reporter compact`: 42/42 test passed.
+- `flutter analyze --no-pub`: No issues found.
+- Ảnh thật hiện có: `build/taskflow-day17.png` chụp màn Công việc trên thiết bị.
+- Chưa tạo/chụp ảnh thật riêng cho danh mục, thống kê và cài đặt; engine
+  widget test thử render toàn màn chưa hoàn tất và không được ghi nhận bằng
+  chứng giả.
 
 ## Checkpoint 5 — Ngày 21: nghiệm thu và nộp
 

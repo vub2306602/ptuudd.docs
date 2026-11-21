@@ -260,11 +260,11 @@ phải thời điểm hạn chính xác.
 
 #### B — Vũ
 
-- **Ngày 15:** sửa lỗi database, category, settings, statistics, router và app composition; kiểm tra dữ liệu rỗng và lưu trữ sau khởi động lại.
-- **Ngày 16:** kiểm tra theme sáng/tối, điều hướng, CRUD danh mục và xóa danh mục có task tham chiếu.
-- **Ngày 17:** phối hợp build/cài thử Android; sửa lỗi cấu hình/build; chỉ làm icon/splash nếu các luồng bắt buộc đã ổn định.
-- **Ngày 18:** viết phần báo cáo về kiến trúc, schema/database, danh mục, thống kê, cài đặt và điều hướng.
-- **Ngày 19:** chuẩn bị dữ liệu demo và ảnh minh chứng cho danh mục, thống kê, theme và các màn chính.
+- **Ngày 15 (đã triển khai và kiểm tra ngày 21/11/2026):** sửa database, category, settings, statistics, router và app composition; thêm migration hook cho các version database tiếp theo; kiểm tra dữ liệu rỗng, khóa ngoại, dữ liệu category/task sau khi đóng-mở database và lưu trữ theme/thời gian nhắc qua provider mới. Kết quả: 41/41 test và analyzer đạt; ngày 15 hoàn tất ở mức tự động kiểm thử, chưa thay thế kiểm thử cold-start trên thiết bị thật.
+- **Ngày 16 (đã triển khai và kiểm tra ngày 21/11/2026):** kiểm tra theme sáng/tối, điều hướng giữa Công việc/Danh mục/Thống kê/Cài đặt, CRUD danh mục và xóa danh mục có task tham chiếu. Kết quả: widget test xác nhận chuyển hai chiều sáng/tối và điều hướng shell; widget test xác nhận thêm/sửa/xóa danh mục; repository test xác nhận xóa danh mục giữ task và đặt `category_id` về `NULL`. `flutter test -j 1` đạt toàn bộ test và analyzer không có lỗi.
+- **Ngày 17 (đã hoàn thành ngày 21/11/2026):** build và cài thử APK debug Android; sửa cấu hình tên app, quyền thông báo, icon launcher và splash; app đã mở được trên Samsung Galaxy A12 và được chụp ảnh bằng chứng. `flutter build apk --debug` thành công, `flutter analyze --no-pub` không có lỗi. Notification runtime và foreground/background vẫn chưa xác nhận phát thực tế.
+- **Ngày 18 (đã hoàn thành ngày 21/11/2026):** đã viết báo cáo sơ lược về kiến trúc UI/Provider/Repository/SQLite, schema hai bảng, danh mục, thống kê, cài đặt, điều hướng và trạng thái Android trong `bao_cao_so_luoc.md`.
+- **Ngày 19 (đã chuẩn bị ngày 21/11/2026):** đã tạo dữ liệu demo ổn định gồm 4 danh mục, 5 công việc, thống kê 5/3/2 trong `du_lieu_demo.sql` và test repository trong `navigation_theme_test.dart`; đã thêm kiểm tra 42 test. Bộ ảnh widget render toàn màn chưa tạo được trong engine test nên ảnh thật hiện có vẫn chỉ là `build/taskflow-day17.png`; chưa ghi nhận ảnh danh mục/thống kê/cài đặt là bằng chứng thật.
 - **Ngày 20:** tập demo phần mình; giải thích database/router/provider và hỏi đáp chéo với Thắng.
 - **Ngày 21:** kiểm tra lại app từ entry point đến các màn; cùng Thắng hoàn tất demo và nộp báo cáo.
 

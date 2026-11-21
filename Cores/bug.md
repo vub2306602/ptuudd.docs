@@ -50,3 +50,55 @@ Quyền thông báo đang được cấp. Chưa kiểm tra được notification
 Android từ chối thao tác chạm tự động qua `adb` do thiếu `INJECT_EVENTS`, nên
 các điều kiện foreground/background, từ chối quyền, thời điểm nhắc và hành vi
 đến hạn vẫn cần thử trực tiếp trên thiết bị.
+
+## Cập nhật Ngày 15 — 21/11/2026
+
+- Đã thêm kiểm thử cold-reopen SQLite cho task và category.
+- Đã thêm migration hook `onUpgrade` cho database version 1; version hiện tại
+  vẫn không xóa dữ liệu khi mở lại và migration thật sẽ được thêm khi schema
+  tăng lên.
+- Kiểm tra tuần tự sau thay đổi:
+  `flutter test -j 1 --reporter compact` — **41/41 test passed**;
+  `flutter analyze --no-pub` — **No issues found**.
+
+## Cập nhật Ngày 16 — 21/11/2026
+
+- Widget test xác nhận chuyển theme tối sang sáng và ngược lại, cùng điều hướng
+  qua các route shell chính.
+- Widget test xác nhận luồng thêm/sửa/xóa danh mục.
+- Repository test xác nhận khóa ngoại bật và xóa danh mục có task tham chiếu
+  không xóa task; `category_id` trở về `NULL`.
+- Kiểm tra tuần tự sau thay đổi:
+  `flutter test -j 1 --reporter compact` — toàn bộ test suite passed;
+  `flutter analyze --no-pub` — **No issues found**.
+
+## Cập nhật Ngày 17 — 21/11/2026
+
+- Android manifest đã đặt tên app `TaskFlow` và thêm quyền thông báo rung.
+- Splash và launcher icon đã dùng branding TaskFlow thay scaffold mặc định.
+- `flutter build apk --debug` — thành công.
+- APK đã cài bằng `adb install -r` và mở được trên Samsung Galaxy A12
+  (SM-A125F); process app đang chạy sau launch.
+- App process: `com.example.ct484project`.
+- Đã lưu ảnh màn hình:
+  `build/taskflow-day17.png`.
+- Còn giới hạn: notification phát thực tế, foreground/background, từ chối quyền
+  và thời điểm đến hạn vẫn chưa kiểm chứng trực tiếp trên thiết bị.
+
+## Cập nhật Ngày 18 — 21/11/2026
+
+- Đã tạo và hoàn thiện `bao_cao_so_luoc.md`.
+- Báo cáo đã mô tả kiến trúc UI/Provider/Repository/SQLite, schema hai bảng,
+  công việc/danh mục, thống kê, cài đặt, điều hướng, Android và kiểm thử.
+- Báo cáo phân tách rõ chức năng đã kiểm chứng khỏi giới hạn chưa xác nhận
+  notification và demo end-to-end.
+
+## Cập nhật Ngày 19 — 21/11/2026
+
+- Đã thêm `du_lieu_demo.sql` với 4 danh mục, 5 công việc và dữ liệu thống kê
+  demo tương ứng.
+- Đã thêm test dữ liệu demo trong `navigation_theme_test.dart`.
+- Full suite hiện tại: **42/42 test passed**.
+- Analyzer: **No issues found**.
+- Giữ nguyên giới hạn: chưa có bộ ảnh thật riêng cho danh mục, thống kê và
+  cài đặt; `taskflow-day17.png` là ảnh thiết bị thật duy nhất hiện có.

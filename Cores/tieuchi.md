@@ -170,11 +170,16 @@ CRUD task/category vào toàn bộ giao diện vẫn đang được triển khai
 
 ## 4. Trạng thái tiêu chí
 
-**Trạng thái hiện tại theo repository ngày 10/11/2026:** entry point TaskFlow,
+**Trạng thái hiện tại theo repository ngày 21/11/2026:** entry point TaskFlow,
 router, Provider, SQLite version 1, CRUD Task/Category, danh sách/form/chi tiết
-Task và lưu cài đặt theme/thời gian nhắc đã có trong mã nguồn. Thống kê vẫn dùng
-số liệu mẫu; local notification chưa được triển khai. Chưa xác nhận build, chạy
-trên thiết bị hay persistence bằng lần khởi động lại trong lần cập nhật này; các
-widget test hiện có còn kỳ vọng màn task placeholder và cần đồng bộ. Các điều
-khoản khác ở tài liệu này vẫn là tiêu chí mục tiêu cho tới khi có bằng chứng
-nghiệm thu tương ứng.
+Task, thống kê SQLite, theme/cài đặt và local notification đã có trong mã nguồn.
+Cold-reopen SQLite và lưu preferences đã được kiểm tra bằng test; full suite đạt
+**42/42 test**, analyzer không có lỗi. APK debug build thành công và đã cài trên
+Android 16/API 36; ngày 17 đã build, cài và mở thành công trên Samsung Galaxy
+A12 với tên app TaskFlow, splash/icon branding và quyền thông báo. Ngày 16 đã
+đạt bằng kiểm thử tự động: theme sáng/tối, điều hướng shell, CRUD danh mục và
+xóa category có task tham chiếu đều được xác nhận. Ngày 18 đã có báo cáo sơ
+lược kiến trúc/schema/danh mục/thống kê/cài đặt/điều hướng. Ngày 19 đã chuẩn bị
+dữ liệu demo và test repository 4 danh mục/5 công việc. Full suite hiện tại
+đạt 42/42 test. Notification thực tế và bộ ảnh danh mục/thống kê/cài đặt vẫn
+chưa được xác nhận trực tiếp.

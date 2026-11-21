@@ -28,8 +28,20 @@ Mã nguồn và kế hoạch cần được phân biệt rõ:
 - Database được mở khi repository danh mục, task hoặc thống kê được gọi; CRUD
   danh mục đã nối vào giao diện. Màn có loading, empty, error/retry và xác nhận
   trước khi xóa.
+- Android đã dùng tên hiển thị `TaskFlow`, launcher/splash branding TaskFlow,
+  quyền `POST_NOTIFICATIONS`/`VIBRATE` và build debug APK thành công. APK đã
+  cài và chạy trên Samsung Galaxy A12 trong lần kiểm thử Ngày 17.
+- Ngày 18 đã hoàn thành báo cáo sơ lược trong `bao_cao_so_luoc.md`, tóm tắt
+  kiến trúc, schema, danh mục, thống kê, cài đặt, điều hướng và trạng thái kiểm
+  thử.
+- Ngày 19 đã chuẩn bị `du_lieu_demo.sql` với 4 danh mục, 5 công việc và test
+  fake repository thống kê 5/3/2; full suite đạt 42 test. Chưa có bộ ảnh thật
+  riêng cho từng màn danh mục/thống kê/cài đặt.
 - Các test hiện có bao phủ cài đặt, danh mục, quy tắc khóa ngoại và thống kê
-  ở repository/provider/giao diện. Sau khi
+  ở repository/provider/giao diện, gồm cả cold-reopen SQLite cho task/category
+  và khôi phục theme/thời gian nhắc bằng provider mới. Theme sáng/tối,
+  điều hướng shell và CRUD/xóa danh mục có task tham chiếu cũng đã được kiểm tra
+  ở widget/repository test. Sau khi
   dashboard/form/chi tiết được nối dữ liệu thật, `widget_test.dart` còn kỳ vọng
   nội dung dashboard và route task placeholder cũ; cần cập nhật trước khi dùng
   làm bằng chứng nghiệm thu phần Task.
